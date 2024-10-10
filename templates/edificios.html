@@ -5,76 +5,273 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edificios</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container-fluid">
-          <a class="navbar-brand">CRUD</a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="materias">Materias</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="">Edificios</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Pricing</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link disabled" aria-disabled="true">Disabled</a>
-              </li>
-            </ul>
-          </div>
+    <!-- barra lateral -->
+    <div class="barra-lateral ">
+        <div class="nombre-pagina">
+            <ion-icon id="box" name="cube"></ion-icon>
+            <Span>CRUD</Span>
         </div>
-    </nav>   
-    
+        <button class="boton">
+            <ion-icon name="person"></ion-icon>
+            <span>Cerrar Sesion</span>
+        </button>
+        <nav class="navegacion">
+            <ul class="navbar-nav">
+                <li>
+                    <a href="#">
+                        <ion-icon name="person-add"></ion-icon>
+                        <span>Alumno</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <ion-icon name="clipboard"></ion-icon>
+                        <span>Asignación de materia</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <ion-icon name="checkbox"></ion-icon>
+                        <span>Asistencia</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <ion-icon name="podium"></ion-icon>
+                        <span>Calificaciones</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="activo">
+                        <ion-icon name="business"></ion-icon>
+                        <span>Edificios</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <ion-icon name="people"></ion-icon>
+                        <span>Grupo</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <ion-icon name="calendar"></ion-icon>
+                        <span>Horario</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="materias">
+                        <ion-icon name="book"></ion-icon>
+                        <span>Materias</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <ion-icon name="receipt"></ion-icon>
+                        <span>Reporte</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <ion-icon name="desktop"></ion-icon>
+                        <span>Salón</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <div class="linea"></div>
+     </div>
+
+    <!-- Container principal -->
     <div class="container">
-        <div class="row align-items-start">
-            <div class="col">
-                <h2>Formulario Edificios</h2>
-                <form method="POST" id="edificioForm">
-                    <div>
-                        <label for="id" class="form-label">ID:</label>
-                        <input type="text" id="id" name="id" class="form-control" value="{{ edificio_editar[0] if edificio_editar else '' }}" readonly>
-                    </div>
-                    <div>
-                        <label for="edificio" class="form-label">Edificio:</label>
-                        <input type="text" id="edificio" name="edificio" class="form-control" value="{{ edificio_editar[1] if edificio_editar else '' }}" required>
-                    </div>
-                    <br>
-                    <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                        <button type="submit" name="guardar" class="btn btn-success">Guardar</button>
-                        <button type="submit" name="modificar" class="btn btn-warning">Modificar</button>
-                        <button type="submit" name="eliminar" class="btn btn-danger">Eliminar</button>
-                        <a href="{{ url_for('edificios') }}" class="btn btn-secondary">limpiar</a>
-                    </div>
-                </form>
+        <div class="row">
+            <div class="col-md-12 d-flex justify-content-between align-items-center mb-3">
+                <h2>Edificios</h2>
+                <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#formEdificios" aria-expanded="false" aria-controls="formEdificios">
+                    Añadir Edificio 
+                </button>
             </div>
-            <div class="col">
-                <h3>Lista de Edificios</h3>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col" class="table-active">ID</th>
-                            <th scope="col" class="table-active">Edificio</th>
-                        </tr>
-                    </thead>
-                    <tbody class="table-group-divider">
-                        {% for edificio in edificios %}
-                            <tr>
-                                <td><a href="{{ url_for('edificios', id=edificio[0]) }}">{{ loop.index }}</a></td>
-                                <td>{{ edificio[1] }}</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+            <!-- Formulario Edificios -->
+            <div class="col-md-12 collapse mb-4" id="formEdificios">
+                <div class="card">
+                    <div class="card-header">
+                        Formulario de Edificios
+                    </div>
+                    <div class="card-body">
+                        <form method="POST">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="edificio" class="form-label">Nombre del edificio:</label>
+                                    <input type="text" id="edificio" name="edificio" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                    <button type="submit" name="guardar" class="btn btn-success">Guardar</button>
+                                <!-- 
+                                    <button >Eliminar</button>
+                                    <a href="{{ url_for('edificios') }}" class="btn btn-secondary">limpiar</a>-->
+                                </div>    
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Lista de Edificios -->
+            <div class="col-md-12 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        Lista de Edificios
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-hover table-borderless">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th scope="col" class="text-center">#</th>
+                                    <th scope="col" class="text-center">Edificio</th>
+                                    <th scope="col" class="text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for edificio in edificios %}
+                                    <tr>
+                                        <td class="text-center">{{ loop.index }}</td>
+                                        <td class="text-center">{{ edificio[1] }}</td>
+                                        <td class="text-center">
+                                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal"
+                                                    data-id="{{ edificio[0] }}" data-edificio="{{ edificio[1] }}">
+                                                    <i class="fa-solid fa-pen-to-square"></i> Modificar
+                                            </button>
+                                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#eliminarModal"
+                                                    data-id="{{ edificio[0] }}" data-edificio="{{ edificio[1] }}">
+                                                    <i class="fa-solid fa-trash"></i> Eliminar
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>                    
+                        </table>                        
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+    <!-- Modal editar -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Modificar</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="id" class="form-label">ID</label>
+                                <input type="text" id="id" name="id" class="form-control" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="edificio" class="form-label">Edificio</label>
+                                <input type="text" id="edificio" name="edificio" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                <button type="submit" name="modificar" class="btn btn-warning">Modificar</button>
+                            </div>    
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
+
+    <!-- Modal eliminar -->
+    <div class="modal fade" id="eliminarModal" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="eliminarModalLabel">Eliminar</h5>
+                </div>
+                <div class="modal-body">
+                    <form method="POST">
+                        <div class="col-md-12">
+                            <h5>¿Estás seguro de querer eliminar el edificio?</h5>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Con ID:</label>
+                                <input type="text" id="id" name="id" class="form-control" readonly>
+                            </div>
+                            <div class="col-md-8">
+                                <label class="form-label">Nombre:</label>
+                                <input type="text" id="edificio" name="edificio" class="form-control" readonly>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                <button type="submit" name="eliminar" class="btn btn-danger"> Eliminar</button>
+                                <button type="button" class="btn btn-success" data-bs-dismiss="modal" aria-label="Close"> Cancelar</button>
+                            </div>    
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+    <script>
+        // Capturar el evento cuando se abre el modal de edición
+        var editModal = document.getElementById('editModal');
+        editModal.addEventListener('show.bs.modal', function (event) {
+            // Botón que disparó el modal
+            var button = event.relatedTarget;
+            
+            // Extraer la información de los atributos data-* del botón
+            var id = button.getAttribute('data-id');
+            var edificio = button.getAttribute('data-edificio');
+            
+            // Rellenar el formulario dentro del modal con los datos correspondientes
+            var modalId = editModal.querySelector('#id');
+            var modalEdificio = editModal.querySelector('#edificio');
+            
+            modalId.value = id;
+            modalEdificio.value = edificio;
+        });
+        // Capturar el evento cuando se abre el modal de eliminar
+        var eliminarModal = document.getElementById('eliminarModal');
+        eliminarModal.addEventListener('show.bs.modal', function (event) {
+            // Botón que disparó el modal
+            var button = event.relatedTarget;
+            
+            // Extraer la información de los atributos data-* del botón
+            var id = button.getAttribute('data-id');
+            var edificio = button.getAttribute('data-edificio');
+            
+            // Rellenar el formulario dentro del modal con los datos correspondientes
+            var modalId = eliminarModal.querySelector('#id');
+            var modalEdificio = eliminarModal.querySelector('#edificio');
+            
+            modalId.value = id;
+            modalEdificio.value = edificio;
+        });
+    </script>
+    
 </body>
 </html>
