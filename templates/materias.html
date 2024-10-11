@@ -16,17 +16,23 @@
 </head>
 <body>
     <!-- barra lateral -->
-     <div class="barra-lateral ">
-        <div class="nombre-pagina">
-            <ion-icon id="box" name="cube"></ion-icon>
-            <Span>CRUD</Span>
+     <div class="barra-lateral">
+
+        <div>
+            <div class="nombre-pagina">
+                <ion-icon id="box" name="cube"></ion-icon>
+                <Span>CRUD</Span>
+            </div>
         </div>
-        <button class="boton">
-            <ion-icon name="person"></ion-icon>
-            <span>Cerrar Sesion</span>
-        </button>
+
         <nav class="navegacion">
             <ul class="navbar-nav">
+                <li>
+                    <a href="principal">
+                        <ion-icon name="home"></ion-icon>
+                        <span>Inicio</span>
+                    </a>
+                </li>
                 <li>
                     <a href="#">
                         <ion-icon name="person-add"></ion-icon>
@@ -89,84 +95,117 @@
                 </li>
             </ul>
         </nav>
+
         <div class="linea"></div>
+
+        <div>
+            <div class="usuario">
+                <div class="info-usuario">
+                    <div class="nombre-email">
+                        <span class="nombre"><b>Usuario</b></span>
+                    </div>
+                    <a href="/"  class="boton">
+                        <ion-icon name="person"></ion-icon>
+                        <span>Cerrar Sesion</span>
+                    </a>
+                </div>
+            </div>
+        </div>
      </div>
 
+     </div>
 
-
-    <!-- Container principal -->
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12 d-flex justify-content-between align-items-center mb-3">
-                <h2>Materias</h2>
-                <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#formMaterias" aria-expanded="false" aria-controls="formMaterias">
-                    Añadir Materia 
-                </button>
-            </div>
-            <!-- Formulario Materias -->
-            <div class="col-md-12 collapse mb-4" id="formMaterias">
-                <div class="card">
-                    <div class="card-header">
-                        Formulario de Materias
-                    </div>
-                    <div class="card-body">
-                        <form method="POST">
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="materia" class="form-label">Nombre de la materia:</label>
-                                    <input type="text" id="materia" name="materia" class="form-control" required>
+     <main>
+        <!-- Container principal -->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 d-flex justify-content-between align-items-center mb-3">
+                    <h2>Materias</h2>
+                </div>
+                <!-- Formulario Materias -->
+                <div class="col-md-12 collapse mb-4" id="formMaterias">
+                    <div class="card">
+                        <div class="card-header">
+                            Formulario de Materias
+                        </div>
+                        <div class="card-body">
+                            <form method="POST">
+                                <div class="row mb-3">
+                                    <div class="col-md-6 col-sm-12">
+                                        <label for="materia" class="form-label">Nombre de la materia:</label>
+                                        <input type="text" id="materia" name="materia" class="form-control" required>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="d-flex justify-content-end">
-                                <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                                    <button type="submit" name="guardar" class="btn btn-success">Guardar</button>
-                                </div>    
-                            </div>
-                        </form>
+                                <div class="d-flex justify-content-end">
+                                    <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                        <button type="submit" name="guardar" class="btn btn-success">Guardar</button>
+                                    </div>    
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Lista de Materias -->
-            <div class="col-md-12 mb-4">
-                <div class="card">
-                    <div class="card-header">
-                        Lista de Materias
-                    </div>
-                    <div class="card-body">
-                        <table class="table table-hover table-borderless">
-                            <thead class="table-primary">
-                                <tr>
-                                    <th scope="col" class="text-center">#</th>
-                                    <th scope="col" class="text-center">Materia</th>
-                                    <th scope="col" class="text-center">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for materia in materias %}
+                
+                <!-- Lista de Materias -->
+                <div class="col-md-12 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            Lista de Materias
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-hover table-borderless">
+                                <thead>
                                     <tr>
-                                        <td class="text-center">{{ loop.index }}</td>
-                                        <td class="text-center">{{ materia[1] }}</td>
-                                        <td class="text-center">
-                                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal"
-                                                    data-id="{{ materia[0] }}" data-materia="{{ materia[1] }}">
-                                                    <ion-icon name="create"></ion-icon> Modificar
-                                            </button>
-                                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#eliminarModal"
-                                                    data-id="{{ materia[0] }}" data-materia="{{ materia[1] }}">
-                                                    <ion-icon name="trash"></ion-icon> Eliminar
-                                            </button>
-                                        </td>
+                                        <th scope="col" class="text-center">
+                                            <b>#</b>
+                                        </th>
+                                        <th scope="col" class="text-center">
+                                            <b>Materia</b>
+                                        </th>
+                                        <th scope="col" class="text-center">
+                                            <b>Fecha de modificacion</b>
+                                        </th>
+                                        <th scope="col" class="text-center">
+                                            <b>Acciones</b>
+                                        </th>
                                     </tr>
-                                {% endfor %}
-                            </tbody>                    
-                        </table>                        
+                                </thead>
+                                <tbody>
+                                    {% for materia in materias %}
+                                        <tr>
+                                            <td class="text-center">{{ loop.index }}</td>
+                                            <td class="text-center">{{ materia[1] }}</td>
+                                            <td class="text-center">{{ materia[2].strftime('%d/%m/%Y') }}</td>
+                                            <td class="text-center">
+                                                <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal"
+                                                        data-id="{{ materia[0] }}" data-materia="{{ materia[1] }}">
+                                                        <ion-icon name="create"></ion-icon> Modificar
+                                                </button>
+                                                <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#eliminarModal"
+                                                        data-id="{{ materia[0] }}" data-materia="{{ materia[1] }}">
+                                                        <ion-icon name="trash"></ion-icon> Eliminar
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>                    
+                            </table>                        
+                        </div>
                     </div>
                 </div>
+                <div class="col-md-12 d-flex justify-content-between align-items-center mb-3">
+                    <div></div>
+                    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#formMaterias" aria-expanded="false" aria-controls="formMaterias">
+                        <ion-icon name="add-circle"></ion-icon> Añadir Materia 
+                    </button>
+                </div>
             </div>
-
-
         </div>
+     </main>
+
+     <div class="menu">
+        <ion-icon name="menu-outline"></ion-icon>
+        <ion-icon name="close-outline"></ion-icon>
     </div>
 
     <!-- Modal editar -->

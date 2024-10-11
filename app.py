@@ -120,7 +120,7 @@ class MateriasMySQL:
         try:
             cone = ConexionMySQL.cconexion()
             cursor = cone.cursor()
-            cursor.execute("SELECT MateriaID, MateriaNombre FROM materia WHERE MateriaStatus = 'AC'")
+            cursor.execute("SELECT MateriaID, MateriaNombre, MateriaFechaModificacion FROM materia WHERE MateriaStatus = 'AC'")
             miResultado = cursor.fetchall()
             cone.commit()
             return miResultado
@@ -205,6 +205,10 @@ class MateriasMySQL:
 @app.route('/')
 def inicio_sesion():
     return render_template('inicio_sesion.html')
+
+@app.route('/principal', methods=['GET', 'POST'])
+def principal():
+    return render_template('principal.html')
 
 @app.route('/materias', methods=['GET', 'POST'])
 def materias():

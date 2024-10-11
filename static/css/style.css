@@ -13,6 +13,9 @@
     --color-boton-texto:rgb(255,255,255);
 
     --color-linea:rgb(180,180,180);
+
+    --color-scroll:rgb(192,192,192);
+    --color-scroll-hover:rgb(134,134,134);
 }
 
 *{
@@ -31,10 +34,23 @@ body{
     background-color: #c2c2c2;
 }
 
-.container{
-    padding-top: 50px;
+/*-----------------Menu*/
+.menu{
+    position: fixed;
+    width: 50px;
+    height: 50px;
+    font-size: 30px;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    cursor: pointer;
+    background-color: var(--color-boton);
+    color: var(--color-boton-texto);
+    right: 15px;
+    top: 15px;
+    z-index: 100;
 }
-
 /*----------------Barra Lateral*/
 
 .barra-lateral{
@@ -90,6 +106,7 @@ body{
 
 /*------------> Botón*/
 .barra-lateral .boton{
+    text-decoration: none;
     width: 100%;
     height: 45px;
     margin-bottom: 20px;
@@ -108,6 +125,26 @@ body{
 
 
 /*--------------> Menu Navegación*/
+
+.barra-lateral .navegacion{
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.barra-lateral .navegacion::-webkit-scrollbar{
+    width: 5px;
+}
+
+.barra-lateral .navegacion::-webkit-scrollbar-thumb{
+    background-color: var(--color-scroll);
+    border-radius: 5px;
+}
+
+.barra-lateral .navegacion::-webkit-scrollbar-thumb:hover{
+    background-color: var(--color-scroll-hover);
+}
+
 .barra-lateral .navegacion a.activo{
     background-color: var(--color-menu-hover);
     color: var(--color-menu-hover-texto);
@@ -147,4 +184,105 @@ body{
     height: 1px;
     margin-top: 15px;
     background-color: var(--color-linea);
+}
+
+/*-------------main*/
+main{
+    margin-left: 250px;
+    padding: 20px;
+    transition: margin-left 0.5s ease;
+}
+main.min-main{
+    margin-left: 80px;
+}
+
+
+@media (max-height: 660px){
+    .barra-lateral .nombre-pagina{
+        margin-bottom: 5px;
+    }
+}
+
+@media(max-width: 600px){
+    .barra-lateral{
+        position: fixed;
+        left: -250px;
+    }
+
+    .max-barra-lateral{
+        left: 0;
+    }
+
+    .menu{
+        display: flex;
+    }
+
+    .menu ion-icon:nth-child(2){
+        display: none;
+    }
+
+    main{
+        margin-left: 0;
+    }
+    
+    main.min-main{
+        margin-left: 0;
+    }
+}
+
+
+
+/* Estilo principal del contenedor para la cita */
+.contenido-principal {
+    margin-left: 250px; /* Respeta la barra lateral */
+    padding: 40px;
+    min-height: 100vh; /* Para que ocupe toda la altura */
+    display: flex;
+    justify-content: center; /* Centra el contenido horizontalmente */
+    align-items: center; /* Centra el contenido verticalmente */
+}
+
+/* Estilo del contenedor de la cita */
+.cita-contenedor {
+    max-width: 800px;
+    text-align: center;
+    padding: 40px;
+    border-radius: 10px;
+}
+
+/* Estilo de la cita */
+.cita {
+    font-family: 'Georgia', serif; /* Fuente similar a la imagen */
+    font-size: 2rem; /* Tamaño de la fuente */
+    color: #333;
+    font-style: italic;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+/* Añadir las comillas */
+.cita::before {
+    content: '“'; /* Comilla de apertura */
+    font-size: 3rem;
+    color: #999;
+    position: absolute;
+    left: -40px;
+    top: -10px;
+}
+
+.cita::after {
+    content: '”'; /* Comilla de cierre */
+    font-size: 3rem;
+    color: #999;
+    position: absolute;
+    right: -40px;
+    bottom: -10px;
+}
+
+/* Estilo del autor de la cita */
+.autor-cita {
+    font-family: 'Georgia', serif;
+    font-size: 1.5rem;
+    color: #666;
+    font-weight: normal;
 }
