@@ -24,6 +24,27 @@ class ConexionMySQL:
             print(f"Error al conectarse a la base de Datos: {error}")
             return None  # Retorna None si hay un error en la conexión
 
+
+# Clase que gestiona los salones 
+
+class SalonesMySQL:
+    @staticmethod
+    def mostrarSalones():
+        try:
+            cone = ConexionMySQL.cconexion()
+            cursor = cone.cursor()
+            cursor.execute("SELECT salon.SalonID, edificio.EdificioNombre, salon.SalonFechaModificacion FROM salon INNER JOIN edificio ON salon.EdificioID = edificio.EdificioID WHERE salon.SalonStatus = 'AC'")
+            miResultado = cursor.fetchall()
+            cone.commit()
+            return miResultado
+        
+        except pymysql.Error as error:
+            print(f"Error al mostrar datos: {error}")
+
+        finally:
+            cursor.close()
+            cone.close()
+
 # Clase que gestiona los edificios
 class EdificiosMySQL:
     @staticmethod
@@ -202,14 +223,18 @@ class MateriasMySQL:
             cone.close()  # Cerrar la conexión
 
 # Rutas
+
+#inicio de sesion
 @app.route('/')
 def inicio_sesion():
     return render_template('inicio_sesion.html')
 
+#principal
 @app.route('/principal', methods=['GET', 'POST'])
 def principal():
     return render_template('principal.html')
 
+#materias
 @app.route('/materias', methods=['GET', 'POST'])
 def materias():
     if request.method == 'POST':
@@ -241,8 +266,16 @@ def materias():
 
     return render_template('materias.html', materias=lista_materias)
 
+#salones
+@app.route('/salones', methods=['GET', 'POST'])
+def salones():
 
+    lista_salones = SalonesMySQL.mostrarSalones()
+    lista_edificios = EdificiosMySQL.mostrarEdificios()
 
+    return render_template('salones.html', salones=lista_salones, edificios=lista_edificios)
+
+#edificios
 @app.route('/edificios', methods=['GET', 'POST'])
 def edificios():
     if request.method == 'POST':
