@@ -133,11 +133,12 @@
                                 <div class="row mb-3">
                                     <div class="col-md-6 col-sm-12">
                                         <label for="salon" class="form-label">Salon</label>
-                                        <input type="number" id="salon" name="salon" class="form-control" required>
+                                        <input type="number" id="salon" name="salon" min="1000" max="9999" class="form-control"  required>
                                     </div>
                                     <div class="col-md-6 col-sm-12">
                                         <label for="edificio"> Edificio</label>
-                                        <select id="edificio" name="edificio" required>
+                                        <select class="form-select" id="edificio" name="edificio" required>
+                                            <option selected>Elige un edificio</option>
                                             {% for edificio in edificios %}
                                                 <option value="{{ edificio[0] }}">{{ edificio[1] }}</option>
                                             {% endfor %}
@@ -182,16 +183,16 @@
                                     {% for salon in salones %}
                                         <td class="text-center">{{ salon[0] }}</td>
                                         <td class="text-center">{{ salon[1] }}</td>
-                                        <td class="text-center">{{ salon[2].strftime('%d/%m/%Y') }}</td>
+                                        <td class="text-center">{{ salon[3].strftime('%d/%m/%Y') }}</td>
                                         <td class="text-center">
                                             <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal"
-                                                        data-id="{{ salon[0] }}" data-salon="{{ salon[1] }}">
+                                                        data-id="{{ salon[0] }}" data-edificio="{{ salon[2] }}">
                                                         <ion-icon name="create"></ion-icon> Modificar
                                                 </button>
-                                                <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#eliminarModal"
-                                                        data-id="{{ salon[0] }}" data-salon="{{ salon[1] }}">
-                                                        <ion-icon name="trash"></ion-icon> Eliminar
-                                                </button>
+                                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#eliminarModal"
+                                                    data-id="{{ salon[0] }}" data-salon="{{ salon[1] }}">
+                                                    <ion-icon name="trash"></ion-icon> Eliminar
+                                            </button>
                                         </td>
                                     {% endfor %}
                                 </tbody>
@@ -202,7 +203,7 @@
                 <div class="col-md-12 d-flex justify-content-between align-items-center mb-3">
                     <div></div>
                     <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#formSalones" aria-expanded="false" aria-controls="formSalones">
-                        <ion-icon name="add-circle"></ion-icon> Añadir Salon 
+                        <ion-icon name="add-circle"></ion-icon> Añadir Salón 
                     </button>
                 </div>
             </div>
@@ -214,6 +215,97 @@
         <ion-icon name="close-outline"></ion-icon>
     </div>
 
+    <!-- Modal editar -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Modificar</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="id" class="form-label">ID</label>
+                                <input type="text" id="id" name="id" class="form-control" readonly>
+                            </div>
+                            <div class="col-md-6 col-sm-12">
+                                <label for="edificioSelect"> Edificio</label>
+                                <select class="form-select" id="edificioSelect" name="edificioSelect" required>
+                                    {% for edificio in edificios %}
+                                        <option value="{{ edificio[0] }}">{{ edificio[1] }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                <button type="submit" name="modificar" class="btn btn-warning">Modificar</button>
+                            </div>    
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal eliminar -->
+    <div class="modal fade" id="eliminarModal" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="eliminarModalLabel">Eliminar</h5>
+                </div>
+                <div class="modal-body">
+                    <form method="POST">
+                        <div class="col-md-12">
+                            <h5>¿Estás seguro de querer eliminar el salon?</h5>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Con ID:</label>
+                                <input type="text" id="id" name="id" class="form-control" readonly>
+                            </div>
+                            <div class="col-md-8">
+                                <label class="form-label">Nombre:</label>
+                                <input type="text" id="materia" name="materia" class="form-control" readonly>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                <button type="submit" name="eliminar" class="btn btn-danger"> Eliminar</button>
+                                <button type="button" class="btn btn-success" data-bs-dismiss="modal" aria-label="Close"> Cancelar</button>
+                            </div>    
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+    <script>
+        
+        // Capturar el evento cuando se abre el modal de edición
+        var editModal = document.getElementById('editModal');
+        editModal.addEventListener('show.bs.modal', function (event) {
+            // Botón que disparó el modal
+            var button = event.relatedTarget;
+            
+            // Extraer la información de los atributos data-* del botón
+            var id = button.getAttribute('data-id');
+            var edificio = button.getAttribute('data-edificio');
+            
+            // Rellenar el formulario dentro del modal con los datos correspondientes
+            var modalId = editModal.querySelector('#id');
+            var select = document.getElementById('edificioSelect');
+            
+            modalId.value = id;
+            select.value = edificio;
+        });
+    </script>
 </body>
 </html>

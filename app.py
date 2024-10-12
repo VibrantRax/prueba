@@ -33,7 +33,7 @@ class SalonesMySQL:
         try:
             cone = ConexionMySQL.cconexion()
             cursor = cone.cursor()
-            cursor.execute("SELECT salon.SalonID, edificio.EdificioNombre, salon.SalonFechaModificacion FROM salon INNER JOIN edificio ON salon.EdificioID = edificio.EdificioID WHERE salon.SalonStatus = 'AC'")
+            cursor.execute("SELECT salon.SalonID, edificio.EdificioNombre, edificio.EdificioID, salon.SalonFechaModificacion FROM salon INNER JOIN edificio ON salon.EdificioID = edificio.EdificioID WHERE salon.SalonStatus = 'AC'")
             miResultado = cursor.fetchall()
             cone.commit()
             return miResultado
