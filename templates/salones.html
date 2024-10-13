@@ -129,16 +129,16 @@
                             Formulario Salones
                         </div>
                         <div class="card-body">
-                            <form action="POST">
+                            <form method="POST" action="">
                                 <div class="row mb-3">
                                     <div class="col-md-6 col-sm-12">
                                         <label for="salon" class="form-label">Salon</label>
-                                        <input type="number" id="salon" name="salon" min="1000" max="9999" class="form-control"  required>
+                                        <input type="number" id="salon" name="salon" min="1000" max="9999" class="form-control" required>
                                     </div>
                                     <div class="col-md-6 col-sm-12">
-                                        <label for="edificio"> Edificio</label>
+                                        <label for="edificio">Edificio</label>
                                         <select class="form-select" id="edificio" name="edificio" required>
-                                            <option selected>Elige un edificio</option>
+                                            <option value="">Elige un edificio</option>
                                             {% for edificio in edificios %}
                                                 <option value="{{ edificio[0] }}">{{ edificio[1] }}</option>
                                             {% endfor %}
@@ -150,7 +150,7 @@
                                         <button type="submit" name="guardar" class="btn btn-success">Guardar</button>
                                     </div>    
                                 </div>
-                            </form>
+                            </form>                            
                         </div>
                     </div>
                 </div>
@@ -181,19 +181,21 @@
                                 </thead>
                                 <tbody>
                                     {% for salon in salones %}
-                                        <td class="text-center">{{ salon[0] }}</td>
-                                        <td class="text-center">{{ salon[1] }}</td>
-                                        <td class="text-center">{{ salon[3].strftime('%d/%m/%Y') }}</td>
-                                        <td class="text-center">
-                                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal"
-                                                        data-id="{{ salon[0] }}" data-edificio="{{ salon[2] }}">
-                                                        <ion-icon name="create"></ion-icon> Modificar
+                                        <tr>    
+                                            <td class="text-center">{{ salon[0] }}</td>
+                                            <td class="text-center">{{ salon[1] }}</td>
+                                            <td class="text-center">{{ salon[3].strftime('%d/%m/%Y') }}</td>
+                                            <td class="text-center">
+                                                <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal"
+                                                            data-id="{{ salon[0] }}" data-edificio="{{ salon[2] }}">
+                                                            <ion-icon name="create"></ion-icon> Modificar
+                                                    </button>
+                                                <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#eliminarModal"
+                                                        data-id="{{ salon[0] }}" data-salon="{{ salon[1] }}">
+                                                        <ion-icon name="trash"></ion-icon> Eliminar
                                                 </button>
-                                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#eliminarModal"
-                                                    data-id="{{ salon[0] }}" data-salon="{{ salon[1] }}">
-                                                    <ion-icon name="trash"></ion-icon> Eliminar
-                                            </button>
-                                        </td>
+                                            </td>
+                                        </tr>
                                     {% endfor %}
                                 </tbody>
                             </table>
@@ -265,7 +267,7 @@
                         <div class="row mb-3">
                             <div class="col-md-4">
                                 <label class="form-label">Con ID:</label>
-                                <input type="text" id="id" name="id" class="form-control" readonly>
+                                <input type="text" id="salon" name="salon" class="form-control" readonly>
                             </div>
                             <div class="col-md-8">
                                 <label class="form-label">Nombre:</label>
@@ -300,7 +302,7 @@
             var edificio = button.getAttribute('data-edificio');
             
             // Rellenar el formulario dentro del modal con los datos correspondientes
-            var modalId = editModal.querySelector('#id');
+            var modalId = editModal.querySelector('#salon');
             var select = document.getElementById('edificioSelect');
             
             modalId.value = id;

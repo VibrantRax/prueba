@@ -44,6 +44,77 @@ class SalonesMySQL:
         finally:
             cursor.close()
             cone.close()
+    
+    @staticmethod
+    def ingresarSalon(salon, edificio_id):
+        try:
+            cone = ConexionMySQL.cconexion()
+            cursor = cone.cursor()
+            cursor.execute("SELECT COUNT(*) FROM salon")
+            tids = cursor.fetchone()[0] + 1
+            
+            salon = salon
+            edi = edificio_id
+            admin = "0"
+            fechmodi = datetime.now()
+            sql = """
+                INSERT INTO salon
+                (SalonID, EdificioID, SalonFechaModificacion, SalonStatus, PersonalAdministrativoId) 
+                VALUES (%s, %s, %s, %s, %s);
+            """
+            values = (salon, edi, fechmodi, 'AC', admin)
+            cursor.execute(sql, values)
+            cone.commit()
+            print(f"Ahora hay {tids} registros en la tabla")
+        
+        except pymysql.Error as error:
+            print(f"Error de ingreso de datos: {error}")
+
+        finally:
+            cursor.close()
+            cone.close()
+    
+    @staticmethod
+    def modificarSalon(salon, edificio_id):
+        try:
+            cone = ConexionMySQL.cconexion()
+            cursor = cone.cursor()
+            salon = salon
+            edi = edificio_id
+            admin = "0"
+            fechmodi = datetime.now()
+            sql = "UPDATE salon SET EdificioID = %s, SalonFechaModificacion = %s, PersonalAdministrativoId = %s WHERE SalonID = %s"
+            values = (edi, fechmodi, admin, salon)
+            cursor.execute(sql, values)
+            cone.commit()
+            print(f"El salon {salon} fue actualizado.")
+        
+        except pymysql.Error as error:
+            print(f"Error al modificar los datos: {error}")
+
+        finally:
+            cursor.close()
+            cone.close()
+
+    @staticmethod
+    def eliminarEdificio(id):
+        try:
+            cone = ConexionMySQL.cconexion()
+            cursor = cone.cursor()
+            admin = "0"
+            fechmodi = datetime.now()
+            sql = "UPDATE edificio SET EdificioStatus = 'IN', EdificioFechaModificacion = %s , PersonalAdministrativoId = %s WHERE edificio.EdificioID = %s"
+            values = (fechmodi,admin,id)
+            cursor.execute(sql, values)
+            cone.commit()
+            print(f"Edificio con ID {id} fue eliminado.")
+        
+        except pymysql.Error as error:
+            print(f"Error al eliminar los datos: {error}")
+
+        finally:
+            cursor.close()  # Cerrar el cursor
+            cone.close()  # Cerrar la conexión
 
 # Clase que gestiona los edificios
 class EdificiosMySQL:
@@ -269,6 +340,36 @@ def materias():
 #salones
 @app.route('/salones', methods=['GET', 'POST'])
 def salones():
+
+    if request.method == 'POST':
+        if 'guardar' in request.form:
+
+            salon = request.form['salon']
+            edificio_id = request.form['edificio']
+
+            if not edificio_id:
+                flash("Por favor ingrese el nombre del edificio.")
+            elif not salon:
+                flash("Por favor ingrese el salon")
+            else:
+                SalonesMySQL.ingresarSalon(salon, edificio_id)
+                flash("Los datos fueron guardados.")
+
+        elif 'modificar' in request.form:
+            salon = request.form['id']
+            edificio_id = request.form['edificioSelect']
+            if not id or not edificio_id:
+                flash("Falta ID o Materia.")
+            else:
+                SalonesMySQL.modificarSalon(salon, edificio_id)
+                flash("Los datos fueron modificados.")
+
+        elif 'eliminar' in request.form:
+            id = request.form['id']
+            if not id:
+                flash("Falta ID")
+            else:
+                MateriasMySQL.eliminarMateria(id)
 
     lista_salones = SalonesMySQL.mostrarSalones()
     lista_edificios = EdificiosMySQL.mostrarEdificios()
