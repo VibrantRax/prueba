@@ -286,3 +286,8 @@ main.min-main{
     color: #666;
     font-weight: normal;
 }
+
+.card-body input, select, textarea{
+    margin-bottom: 30px;
+}
+
