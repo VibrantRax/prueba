@@ -7,9 +7,9 @@ class ConexionMySQL:
         """Establece la conexión a la base de datos MySQL."""
         try:
             conexion = pymysql.connect(
-                host="34.47.10.132",
-                user="admin",
-                password="12345",
+                host="localhost",
+                user="root",
+                password="",
                 db='db_escolar'
             )
             print("Conexión correcta")

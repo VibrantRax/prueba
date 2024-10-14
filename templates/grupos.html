@@ -55,8 +55,8 @@
                                         <input id="grupo" name="grupo" type="text" class="form-control">
                                     </div>
                                     <div class="col-md-6 col-sm-12">
-                                        <label for="status" class="form-label">Salon</label>
-                                        <select name="status" id="status" class="form-select">
+                                        <label for="salon" class="form-label">Salon</label>
+                                        <select name="salon" id="salon" class="form-select">
                                             <option value="">Elige un salon</option>
                                             {% for salon in salones %}
                                                 <option value="{{ salon[0] }}">{{ salon[0] }} — {{ salon[1] }}</option>
@@ -140,6 +140,10 @@
                 <div class="modal-body">
                     <form method="POST">
                         <div class="row mb-3">
+                            <div class="col-md-6 col-sm-12">
+                                <label for="id" class="form-label">ID</label>
+                                <input id="id" name="id" type="text" class="form-control" readonly>
+                            </div>
                              <div class="col-md-6 col-sm-12">
                                  <label for="docente" class="form-label">Docente</label>
                                  <select name="docente" id="docente" class="form-select">
@@ -183,27 +187,31 @@
                 <div class="modal-body">
                     <form method="POST">
                         <div class="row mb-3">
-                             <div class="col-md-6 col-sm-12">
-                                 <label for="docente" class="form-label">Docente</label>
-                                 <select name="docente" id="docente" class="form-select">
-                                     <option value="">Elige un docente</option>
-                                     <option value="1">Juan</option>
-                                     <option value="2">Czar</option>
-                                 </select>
-                             </div>
-                             <div class="col-md-6 col-sm-12">
-                                 <label for="grupo" class="form-label">Nombre del Grupos</label>
-                                 <input id="grupo" name="grupo" type="text" class="form-control">
-                             </div>
-                             <div class="col-md-6 col-sm-12">
-                                 <label for="salon" class="form-label">Salon</label>
-                                 <select name="salon" id="salon" class="form-select">
-                                     <option value="">Elige un salon</option>
-                                     {% for salon in salones %}
-                                         <option value="{{ salon[0] }}">{{ salon[0] }} — {{ salon[1] }}</option>
-                                     {% endfor %}
-                                 </select>
-                             </div>
+                            <div class="col-md-6 col-sm-12">
+                                <label for="id" class="form-label">ID</label>
+                                <input id="id" name="id" type="text" class="form-control" readonly>
+                            </div>
+                            <div class="col-md-6 col-sm-12">
+                                <label for="docente" class="form-label">Docente</label>
+                                <select name="docente" id="docente" class="form-select" disabled>
+                                    <option value="">Elige un docente</option>
+                                    <option value="1">Juan</option>
+                                    <option value="2">Czar</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 col-sm-12">
+                                <label for="grupo" class="form-label">Nombre del Grupo</label>
+                                <input id="grupo" name="grupo" type="text" class="form-control" readonly>
+                            </div>
+                            <div class="col-md-6 col-sm-12">
+                                <label for="salon" class="form-label">Salón</label>
+                                <select name="salon" id="salon" class="form-select" disabled>
+                                    <option value="">Elige un salón</option>
+                                    {% for salon in salones %}
+                                        <option value="{{ salon[0] }}">{{ salon[0] }} — {{ salon[1] }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
                         </div>
                         <div class="d-flex justify-content-end">
                             <div class="btn-group" role="group" aria-label="Basic mixed styles example">
@@ -232,11 +240,38 @@
             var salon = button.getAttribute('data-salon');
 
             // Obtener los elementos de los campos en el modal
+            var modalId = editModal.querySelector('#editModal #id')
             var modalDocente = editModal.querySelector('#editModal #docente');
             var modalNombre = editModal.querySelector('#editModal #grupo');
             var modalSalon = editModal.querySelector('#editModal #salon');
 
             // Actualizar el contenido del modal con los valores obtenidos
+            modalId.value = id;
+            modalDocente.value = docente;
+            modalNombre.value = nombre;
+            modalSalon.value = salon;
+        });
+
+        // Capturar el evento cuando se abre el modal de eliminar
+        var eliminarModal = document.getElementById('eliminarModal');
+        eliminarModal.addEventListener('show.bs.modal', function (event) {
+            // Botón que disparó el modal
+            var button = event.relatedTarget;
+            
+            // Extraer la información de los atributos data-*
+            var id = button.getAttribute('data-id');
+            var docente = button.getAttribute('data-docente');
+            var nombre = button.getAttribute('data-nombre');
+            var salon = button.getAttribute('data-salon');
+            
+            // Obtener los elementos de los campos en el modal
+            var modalId = eliminarModal.querySelector('#id');
+            var modalDocente = eliminarModal.querySelector('#docente');
+            var modalNombre = eliminarModal.querySelector('#grupo');
+            var modalSalon = eliminarModal.querySelector('#salon');
+
+            // Actualizar el contenido del modal con los valores obtenidos
+            modalId.value = id;
             modalDocente.value = docente;
             modalNombre.value = nombre;
             modalSalon.value = salon;

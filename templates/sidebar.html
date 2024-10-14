@@ -28,7 +28,7 @@
                 </a>
             </li>
             <li>
-                <a href="#" class="{% if active_page == 'asistencia' %}activo{% endif %}">
+                <a href="{{ url_for('asistencias') }}" class="{% if active_page == 'asistencia' %}activo{% endif %}">
                     <ion-icon name="checkbox"></ion-icon>
                     <span>Asistencia</span>
                 </a>

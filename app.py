@@ -175,12 +175,52 @@ def reportes():
 @app.route('/grupos', methods=['GET', 'POST'])
 def grupos():
     if request.method == 'POST':
-        pass
+        if 'guardar' in request.form:
+
+            docente = request.form.get('docente')
+            grupo = request.form['grupo']
+            salon = request.form.get('salon')
+
+            if not docente or not grupo or not salon:
+                flash("Faltan datos")
+            else:
+                GruposMySQL.ingresarGrupos(docente, grupo, salon)
+                flash("Los datos fueron guardados.")
+
+
+        if 'modificar' in request.form:
+
+            id = request.form['id']
+            docente = request.form.get('docente')
+            grupo = request.form['grupo']
+            salon = request.form.get('salon')
+
+            if not id or not docente or not grupo or not salon:
+                flash("Faltan datos")
+            else:
+                GruposMySQL.modificarGrupo(docente, grupo, salon, id)
+                flash("Los datos fueron modificados.")
+
+        if 'eliminar' in request.form:
+            id = request.form['id']
+
+            if not id:
+                flash("Faltan datos")
+            else:
+                GruposMySQL.eliminarGrupo(id)
+                flash("Los datos fueron eliminados.")
 
     lista_salones = SalonesMySQL.mostrarSalones()
     lista_grupos = GruposMySQL.mostrarGrupos()
 
     return render_template('grupos.html', salones=lista_salones, grupos = lista_grupos, active_page='grupo')
 
+#asistencia
+@app.route('/asistencias', methods=['GET', 'POST'])
+def asistencias():
+    if request.method == 'POST':
+        pass
+
+    return render_template('asistencias.html', active_page = 'asistencia')
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
