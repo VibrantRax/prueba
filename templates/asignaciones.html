@@ -21,7 +21,7 @@
     <div class="contenido">
         {% block content %}{% endblock %}
     </div>
-    
+
     <!-- Contenido -->
     <main>
         <div class="container-fluid">
@@ -29,37 +29,34 @@
 
                 <!--Titulo-->
                 <div class="col-md-12 d-flex justify-content-between align-items-center mb-3">
-                    <h2>Grupos</h2>
+                    <h2>Asignacion de materias</h2>
                 </div>
 
-                <!--Formulario de reportes-->
-                <div class="col-md-12 collapse mb-4" id="formGrupos">
+                <!--Formulario de asignacion-->
+                <div class="col-md-12 collapse mb-4" id="formGruposMaterias">
                     <div class="card">
                         <div class="card-header card-header col-md-12 d-flex justify-content-between align-items-center mb-3">
-                                <span>Formulario de Reportes</span>
-                                <button type="button" class="btn-close" data-bs-toggle="collapse" data-bs-target="#formGrupos" aria-expanded="false" aria-controls="formGrupos" aria-label="Close"></button>
+                                <span>Formulario de Asigancion de Materias</span>
+                                <button type="button" class="btn-close" data-bs-toggle="collapse" data-bs-target="#formGruposMaterias" aria-expanded="false" aria-controls="formGruposMaterias" aria-label="Close"></button>
                         </div>
                         <div class="card-body">
                             <form method="POST">
                                <div class="row mb-3">
                                     <div class="col-md-6 col-sm-12">
-                                        <label for="docente" class="form-label">Docente</label>
-                                        <select name="docente" id="docente" class="form-select">
-                                            <option value="">Elige un docente</option>
-                                            <option value="1">Juan</option>
-                                            <option value="2">Czar</option>
+                                        <label for="grupo" class="form-label">Grupo</label>
+                                        <select name="grupo" id="grupo" class="form-select">
+                                            <option value="">Elige un grupo</option>
+                                            {% for grupo in grupos %}
+                                                <option value="{{ grupo[0] }}">{{ grupo[2] }}</option>
+                                            {% endfor %}
                                         </select>
                                     </div>
                                     <div class="col-md-6 col-sm-12">
-                                        <label for="grupo" class="form-label">Nombre del Grupos</label>
-                                        <input id="grupo" name="grupo" type="text" class="form-control">
-                                    </div>
-                                    <div class="col-md-6 col-sm-12">
-                                        <label for="salon" class="form-label">Salon</label>
-                                        <select name="salon" id="salon" class="form-select">
-                                            <option value="">Elige un salon</option>
-                                            {% for salon in salones %}
-                                                <option value="{{ salon[0] }}">{{ salon[0] }} — {{ salon[1] }}</option>
+                                        <label for="materia" class="form-label">Materia</label>
+                                        <select name="materia" id="materia" class="form-select">
+                                            <option value="">Elige una materia</option>
+                                            {% for materia in materias %}
+                                                <option value="{{ materia[0] }}">{{ materia[1] }}</option>
                                             {% endfor %}
                                         </select>
                                     </div>
@@ -74,33 +71,33 @@
                     </div>
                 </div>
 
-                <!-- Lista de grupos --> 
+                <!-- Lista de asignacion de materias --> 
                 <div class="col-md-12 mb-4">
                     <div class="card">
-                        <div class="card-header">Lista de grupos</div>
+                        <div class="card-header">Lista de asignacion de materias</div>
                         <div class="card-body">
                             <table class="table table-hover table-borderless">
                                 <thead>
                                     <tr>
-                                        <th class="text-center"><b>ID del Docente</b></th>
-                                        <th class="text-center"><b>Nombre del Grupo</b></th>
-                                        <th class="text-center"><b>Salón</b></th>
+                                        <th class="text-center"><b>Grupo</b></th>
+                                        <th class="text-center"><b>Materia</b></th>
+                                        <th class="text-center"><b>Fecha de modificacion</b></th>
                                         <th class="text-center"><b>Acciones</b></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for grupo in grupos %}
+                                    {% for asignacion in asignaciones %}
                                         <tr>
-                                            <td class="text-center">{{ grupo[1] }}</td>
-                                            <td class="text-center">{{ grupo[2] }}</td>
-                                            <td class="text-center">{{ grupo[3] }}</td>
+                                            <td class="text-center">{{ asignacion[2] }}</td>
+                                            <td class="text-center">{{ asignacion[4] }}</td>
+                                            <td class="text-center">{{ asignacion[5].strftime('%d/%m/%Y') }}</td>
                                             <td class="text-center">
                                                 <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal"
-                                                    data-id="{{ grupo[0] }}" data-docente="{{ grupo[1] }}" data-nombre="{{ grupo[2] }}" data-salon="{{ grupo[3] }}">
+                                                    data-id="{{ asignacion[0] }}" data-grupo="{{ asignacion[1] }}" data-materia="{{ asignacion[3] }}">
                                                     <ion-icon name="create"></ion-icon> Modificar
                                                 </button>
                                                 <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#eliminarModal"
-                                                    data-id="{{ grupo[0] }}" data-docente="{{ grupo[1] }}" data-nombre="{{ grupo[2] }}" data-salon="{{ grupo[3] }}">
+                                                    data-id="{{ asignacion[0] }}" data-grupo="{{ asignacion[1] }}" data-materia="{{ asignacion[3] }}">
                                                     <ion-icon name="trash"></ion-icon> Eliminar
                                                 </button>
                                             </td>
@@ -112,10 +109,11 @@
                     </div>
                 </div>
 
+                <!--Boton apertura formulario-->
                 <div class="col-md-12 d-flex justify-content-between align-items-center mb-3">
                     <div></div>
-                    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#formGrupos" aria-expanded="false" aria-controls="formGrupos">
-                        <ion-icon name="add-circle"></ion-icon> Añadir Grupo 
+                    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#formGruposMaterias" aria-expanded="false" aria-controls="formGruposMaterias">
+                        <ion-icon name="add-circle"></ion-icon> Asignar materia 
                     </button>
                 </div>
 
@@ -123,7 +121,7 @@
         </div>
     </main>
 
-     <!-- Boton menu oculto -->
+    <!-- Boton menu oculto -->
     <div class="menu">
         <ion-icon name="menu-outline"></ion-icon>
         <ion-icon name="close-outline"></ion-icon>
@@ -144,27 +142,24 @@
                                 <label for="id" class="form-label">ID</label>
                                 <input id="id" name="id" type="text" class="form-control" readonly>
                             </div>
-                             <div class="col-md-6 col-sm-12">
-                                 <label for="docente" class="form-label">Docente</label>
-                                 <select name="docente" id="docente" class="form-select">
-                                     <option value="">Elige un docente</option>
-                                     <option value="1">Juan</option>
-                                     <option value="2">Czar</option>
-                                 </select>
-                             </div>
-                             <div class="col-md-6 col-sm-12">
-                                 <label for="grupo" class="form-label">Nombre del Grupos</label>
-                                 <input id="grupo" name="grupo" type="text" class="form-control">
-                             </div>
-                             <div class="col-md-6 col-sm-12">
-                                 <label for="salon" class="form-label">Salon</label>
-                                 <select name="salon" id="salon" class="form-select">
-                                     <option value="">Elige un salon</option>
-                                     {% for salon in salones %}
-                                         <option value="{{ salon[0] }}">{{ salon[0] }} — {{ salon[1] }}</option>
-                                     {% endfor %}
-                                 </select>
-                             </div>
+                            <div class="col-md-6 col-sm-12">
+                                <label for="grupo" class="form-label">Grupo</label>
+                                <select name="grupo" id="grupo" class="form-select">
+                                    <option value="">Elige un grupo</option>
+                                    {% for grupo in grupos %}
+                                        <option value="{{ grupo[0] }}">{{ grupo[2] }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6 col-sm-12">
+                                <label for="materia" class="form-label">Materia</label>
+                                <select name="materia" id="materia" class="form-select">
+                                    <option value="">Elige una materia</option>
+                                    {% for materia in materias %}
+                                        <option value="{{ materia[0] }}">{{ materia[1] }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
                         </div>
                         <div class="d-flex justify-content-end">
                             <div class="btn-group" role="group" aria-label="Basic mixed styles example">
@@ -192,23 +187,20 @@
                                 <input id="id" name="id" type="text" class="form-control" readonly>
                             </div>
                             <div class="col-md-6 col-sm-12">
-                                <label for="docente" class="form-label">Docente</label>
-                                <select name="docente" id="docente" class="form-select" disabled>
-                                    <option value="">Elige un docente</option>
-                                    <option value="1">Juan</option>
-                                    <option value="2">Czar</option>
+                                <label for="grupo" class="form-label">Grupo</label>
+                                <select name="grupo" id="grupo" class="form-select" disabled>
+                                    <option value="">Elige un grupo</option>
+                                    {% for grupo in grupos %}
+                                        <option value="{{ grupo[0] }}">{{ grupo[2] }}</option>
+                                    {% endfor %}
                                 </select>
                             </div>
                             <div class="col-md-6 col-sm-12">
-                                <label for="grupo" class="form-label">Nombre del Grupo</label>
-                                <input id="grupo" name="grupo" type="text" class="form-control" readonly>
-                            </div>
-                            <div class="col-md-6 col-sm-12">
-                                <label for="salon" class="form-label">Salón</label>
-                                <select name="salon" id="salon" class="form-select" disabled>
-                                    <option value="">Elige un salón</option>
-                                    {% for salon in salones %}
-                                        <option value="{{ salon[0] }}">{{ salon[0] }} — {{ salon[1] }}</option>
+                                <label for="materia" class="form-label">Materia</label>
+                                <select name="materia" id="materia" class="form-select" disabled>
+                                    <option value="">Elige una materia</option>
+                                    {% for materia in materias %}
+                                        <option value="{{ materia[0] }}">{{ materia[1] }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -225,7 +217,7 @@
         </div>
     </div>
 
-     <!-- Scripts -->
+    <!-- Scripts -->
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
     <script>
         var editModal = document.getElementById('editModal');
@@ -235,21 +227,18 @@
 
             // Extraer la información de los atributos data-*
             var id = button.getAttribute('data-id');
-            var docente = button.getAttribute('data-docente');
-            var nombre = button.getAttribute('data-nombre');
-            var salon = button.getAttribute('data-salon');
+            var grupo = button.getAttribute('data-grupo');
+            var materia = button.getAttribute('data-materia');
 
             // Obtener los elementos de los campos en el modal
-            var modalId = editModal.querySelector('#editModal #id')
-            var modalDocente = editModal.querySelector('#editModal #docente');
-            var modalNombre = editModal.querySelector('#editModal #grupo');
-            var modalSalon = editModal.querySelector('#editModal #salon');
+            var modalId = editModal.querySelector('#id')
+            var modalGrupo = editModal.querySelector(' #grupo');
+            var modalMateria = editModal.querySelector(' #materia');
 
             // Actualizar el contenido del modal con los valores obtenidos
             modalId.value = id;
-            modalDocente.value = docente;
-            modalNombre.value = nombre;
-            modalSalon.value = salon;
+            modalGrupo.value = grupo;
+            modalMateria.value = materia;
         });
 
         // Capturar el evento cuando se abre el modal de eliminar
@@ -260,21 +249,18 @@
             
             // Extraer la información de los atributos data-*
             var id = button.getAttribute('data-id');
-            var docente = button.getAttribute('data-docente');
-            var nombre = button.getAttribute('data-nombre');
-            var salon = button.getAttribute('data-salon');
+            var grupo = button.getAttribute('data-grupo');
+            var materia = button.getAttribute('data-materia');
             
             // Obtener los elementos de los campos en el modal
-            var modalId = eliminarModal.querySelector('#id');
-            var modalDocente = eliminarModal.querySelector('#docente');
-            var modalNombre = eliminarModal.querySelector('#grupo');
-            var modalSalon = eliminarModal.querySelector('#salon');
+            var modalId = eliminarModal.querySelector('#eliminarModal #id')
+            var modalGrupo = eliminarModal.querySelector('#eliminarModal #grupo');
+            var modalMateria = eliminarModal.querySelector('#eliminarModal #materia');
 
             // Actualizar el contenido del modal con los valores obtenidos
             modalId.value = id;
-            modalDocente.value = docente;
-            modalNombre.value = nombre;
-            modalSalon.value = salon;
+            modalGrupo.value = grupo;
+            modalMateria.value = materia;
         });
 
         // Función que se ejecuta cuando el DOM está completamente cargado
@@ -286,7 +272,7 @@
             forms.forEach(function(form) {
                 form.reset();
             });
-        });
+        });v
     </script>
 </body>
 </html>

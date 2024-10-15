@@ -16,13 +16,13 @@
                 </a>
             </li>
             <li>
-                <a href="#" class="{% if active_page == 'alumno' %}activo{% endif %}">
+                <a href="{{ url_for('alumnos') }}" class="{% if active_page == 'alumno' %}activo{% endif %}">
                     <ion-icon name="person-add"></ion-icon>
                     <span>Alumno</span>
                 </a>
             </li>
             <li>
-                <a href="#" class="{% if active_page == 'asignacion' %}activo{% endif %}">
+                <a href="{{ url_for('asignaciones') }}" class="{% if active_page == 'asignacion' %}activo{% endif %}">
                     <ion-icon name="clipboard"></ion-icon>
                     <span>Asignación de materia</span>
                 </a>

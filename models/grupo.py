@@ -10,6 +10,8 @@ class GruposMySQL:
         try:
             cone = ConexionMySQL.cconexion()
             cursor = cone.cursor()
+
+            #consulta MySQL
             cursor.execute("SELECT GrupoID, DocenteID, GrupoNombre, SalonID FROM grupo WHERE GrupoStatus = 'AC'")
             miResultado = cursor.fetchall()
             cone.commit()
@@ -19,8 +21,8 @@ class GruposMySQL:
             print(f"Error al mostrar datos: {error}")
 
         finally:
-            cursor.close()
-            cone.close()
+            cursor.close()  # Cerrar el cursor
+            cone.close()  # Cerrar la conexión
 
     @staticmethod
     def ingresarGrupos(docente, grupo, salon):
@@ -28,14 +30,16 @@ class GruposMySQL:
             cone = ConexionMySQL.cconexion()
             cursor = cone.cursor()
 
-            # Genera un nuevo ID para el reporte (considera un método alternativo)
+            # Genera un nuevo ID para el grupo
             cursor.execute("SELECT COUNT(*) FROM grupo")
             tids = cursor.fetchone()[0] + 1
 
             # Asignación de valores
-            fechmodi = datetime.now()  # Fecha actual para la modificación
+            fechmodi = datetime.now()  
             admin = '0'
 
+
+            #consulta MySQL
             sql = """INSERT INTO grupo (GrupoID, DocenteId, GrupoNombre, SalonID, 
                                                 GrupoFechaModificacion, GrupoStatus, 
                                                 PersonalAdministrativoId) 
@@ -55,16 +59,16 @@ class GruposMySQL:
 
     @staticmethod
     def modificarGrupo(docente, grupo, salon, id):
-        cone = None
-        cursor = None
         try:
             cone = ConexionMySQL.cconexion()
             cursor = cone.cursor()
             
             # Asignación de valores
-            fechmodi = datetime.now()  # Fecha actual para la modificación
+            fechmodi = datetime.now() 
             admin = '0'
 
+
+            #consulta MySQL
             sql = """UPDATE grupo 
                      SET DocenteId = %s, GrupoNombre = %s, SalonID = %s, 
                          GrupoFechaModificacion = %s, PersonalAdministrativoId = %s 
@@ -89,8 +93,11 @@ class GruposMySQL:
             cursor = cone.cursor()
             admin = "0"
             fechmodi = datetime.now()
+
+            #consulta MySQL
             sql = "UPDATE grupo SET GrupoFechaModificacion = %s, GrupoStatus = 'IN', PersonalAdministrativoId = %s WHERE GrupoID = %s"
             values = (fechmodi,admin,id)
+            
             cursor.execute(sql, values)
             cone.commit()
             print(f"Grupo con ID {id} fue eliminado.")
