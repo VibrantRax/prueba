@@ -15,6 +15,8 @@
                     <span>Inicio</span>
                 </a>
             </li>
+
+            {% if username == 'admin' %}
             <li>
                 <a href="{{ url_for('alumnos') }}" class="{% if active_page == 'alumno' %}activo{% endif %}">
                     <ion-icon name="person-add"></ion-icon>
@@ -45,6 +47,7 @@
                     <span>Edificios</span>
                 </a>
             </li>
+            {% endif %}
             <li>
                 <a href="{{ url_for('grupos') }}" class="{% if active_page == 'grupo' %}activo{% endif %}">
                     <ion-icon name="people"></ion-icon>
@@ -84,9 +87,9 @@
         <div class="usuario">
             <div class="info-usuario">
                 <div class="nombre-email">
-                    <span class="nombre"><b>Usuario</b></span>
+                    <span class="nombre"><b>{{ username }}</b></span>
                 </div>
-                <a href="/" class="boton">
+                <a href="{{ url_for('logout') }}" class="boton">
                     <ion-icon name="person"></ion-icon>
                     <span>Cerrar Sesion</span>
                 </a>

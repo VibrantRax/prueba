@@ -1,4 +1,6 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, redirect, url_for, request, flash
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
 import pymysql
 from datetime import datetime
 from models.salones import SalonesMySQL
@@ -12,17 +14,58 @@ from models.alumnos import AlumnoMySQL
 app = Flask(__name__)
 app.secret_key = "tu_secreto"  # Se requiere para usar flash
 
+# Configuración de Flask-Login
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+
+# Simulación de una base de datos de usuarios
+usuarios = {
+    'admin': generate_password_hash('adminpass'),  # Cambia 'adminpass' por la contraseña real
+    'profesor': generate_password_hash('profesorpass'),
+}
+
+class User(UserMixin):
+    def __init__(self, username):
+        self.id = username
+
+@login_manager.user_loader
+def load_user(username):
+    if username in usuarios:
+        return User(username)
+    return None
+
+
 # Rutas
 
 #inicio de sesion
-@app.route('/')
-def inicio_sesion():
-    return render_template('inicio_sesion.html', title="Inicio de Sesion")
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        user = load_user(username)
+
+        if user and check_password_hash(usuarios[username], password):
+            login_user(user)
+            return redirect(url_for('principal'))
+
+        else:
+            flash('Nombre de usuario o contraseña incorrectos.')
+    
+    return render_template('login.html', title="Inicio de Sesion")
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))  # Esto busca una ruta con el nombre 'login'
 
 #principal
 @app.route('/principal', methods=['GET', 'POST'])
+@login_required
 def principal():
-    return render_template('principal.html',active_page='inicio', title="Inicio")
+    return render_template('principal.html', username=current_user.id, active_page='inicio', title="Inicio")
 
 #materias
 @app.route('/materias', methods=['GET', 'POST'])
@@ -62,7 +105,7 @@ def materias():
 
     lista_materias = MateriasMySQL.mostrarMaterias()
 
-    return render_template('materias.html', materias=lista_materias, active_page='materias', title="Materias")
+    return render_template('materias.html', materias=lista_materias, username=current_user.id, active_page='materias', title="Materias")
 
 #salones
 @app.route('/salones', methods=['GET', 'POST'])
@@ -104,7 +147,7 @@ def salones():
     lista_salones = SalonesMySQL.mostrarSalones()
     lista_edificios = EdificiosMySQL.mostrarEdificios()
 
-    return render_template('salones.html', salones=lista_salones, edificios=lista_edificios, active_page='salon', title="Salones")
+    return render_template('salones.html', salones=lista_salones, username=current_user.id, edificios=lista_edificios, active_page='salon', title="Salones")
 
 #edificios
 @app.route('/edificios', methods=['GET', 'POST'])
@@ -143,7 +186,7 @@ def edificios():
                 return redirect(url_for('edificios'))
 
     lista_edificios = EdificiosMySQL.mostrarEdificios()
-    return render_template('edificios.html', edificios=lista_edificios, active_page='edificios', title="Edificios")
+    return render_template('edificios.html', edificios=lista_edificios, username=current_user.id, active_page='edificios', title="Edificios")
 
 #reportes 
 @app.route('/reportes', methods=['GET', 'POST'])
@@ -193,7 +236,7 @@ def reportes():
     lista_reportes_resueltos = ReportesMySQL.mostrarReportesResueltos()
     lista_reportes = ReportesMySQL.mostrarReportes()
 
-    return render_template('reportes.html', resueltos = lista_reportes_resueltos, reportes = lista_reportes ,active_page='reporte', title="Reportes")
+    return render_template('reportes.html', username=current_user.id, resueltos = lista_reportes_resueltos, reportes = lista_reportes ,active_page='reporte', title="Reportes")
 
 #grupos
 @app.route('/grupos', methods=['GET', 'POST'])
@@ -238,7 +281,7 @@ def grupos():
     lista_salones = SalonesMySQL.mostrarSalones()
     lista_grupos = GruposMySQL.mostrarGrupos()
 
-    return render_template('grupos.html', salones=lista_salones, grupos = lista_grupos, active_page='grupo', title="Grupos")
+    return render_template('grupos.html', username=current_user.id, salones=lista_salones, grupos = lista_grupos, active_page='grupo', title="Grupos")
 
 #asistencia
 @app.route('/asistencias', methods=['GET', 'POST'])
@@ -246,7 +289,7 @@ def asistencias():
     if request.method == 'POST':
         pass
 
-    return render_template('asistencias.html', active_page = 'asistencia', title="Asistencias")
+    return render_template('asistencias.html', username=current_user.id, active_page = 'asistencia', title="Asistencias")
 
 #asignacion de materias
 @app.route('/asignaciones', methods = ['GET', "POST"])
@@ -291,7 +334,7 @@ def asignaciones():
     lista_materias = MateriasMySQL.mostrarMaterias()
     lista_grupomaterias = AsignacionMySQL.mostrarAsignaciones()
 
-    return render_template('asignaciones.html', grupos = lista_grupos, materias = lista_materias, asignaciones = lista_grupomaterias, active_page = 'asignacion' , title="Asignaciones")
+    return render_template('asignaciones.html', username=current_user.id, grupos = lista_grupos, materias = lista_materias, asignaciones = lista_grupomaterias, active_page = 'asignacion' , title="Asignaciones")
 
 #alumnos
 @app.route('/alumnos', methods = ['GET', "POST"])
@@ -334,7 +377,7 @@ def alumnos():
     lista_grupos = GruposMySQL.mostrarGrupos()
     lista_alumnos = AlumnoMySQL.mostrarAlumnos()
 
-    return render_template('alumnos.html', grupos = lista_grupos, alumnos = lista_alumnos, active_page = 'alumno', title="Alumnos")
+    return render_template('alumnos.html', username=current_user.id, grupos = lista_grupos, alumnos = lista_alumnos, active_page = 'alumno', title="Alumnos")
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
