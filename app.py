@@ -1,8 +1,7 @@
 from flask import Flask, render_template, redirect, url_for, request, flash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-import pymysql
-from datetime import datetime
+from datetime import datetime, timedelta
 from models.salones import SalonesMySQL
 from models.edificios import EdificiosMySQL
 from models.materias import MateriasMySQL
@@ -34,6 +33,24 @@ def load_user(username):
     if username in usuarios:
         return User(username)
     return None
+
+# Cambia el nombre de la variable para evitar conflictos
+asistencia_datos = [
+    {"nombre": "Agustin Ramos", "14-Oct": "✔", "15-Oct": "✘", "16-Oct": "✔", "17-Oct": "R", "18-Oct": "✔"},
+    {"nombre": "Sebastian Ramos", "14-Oct": "✔", "15-Oct": "✔", "16-Oct": "✔", "17-Oct": "R", "18-Oct": "✔"},
+    {"nombre": "Jennifer Janice Jimenez Vidal", "14-Oct": "✔", "15-Oct": "✔", "16-Oct": "✔", "17-Oct": "J", "18-Oct": "✔"},
+    {"nombre": "Jhon Doe", "14-Oct": "✔", "15-Oct": "✔", "16-Oct": "✔", "17-Oct": "✔", "18-Oct": "✔"},
+    {"nombre": "Fernanda Rivera", "14-Oct": "✔", "15-Oct": "✔", "16-Oct": "✔", "17-Oct": "✔", "18-Oct": "✔"},
+]
+
+def generar_fechas(inicio, fin):
+    """Genera una lista de fechas entre inicio y fin."""
+    fechas = []
+    fecha_actual = inicio
+    while fecha_actual <= fin:
+        fechas.append(fecha_actual.strftime('%d-%b'))
+        fecha_actual += timedelta(days=1)
+    return fechas
 
 
 # Rutas
@@ -285,11 +302,40 @@ def grupos():
 
 #asistencia
 @app.route('/asistencias', methods=['GET', 'POST'])
+@login_required
 def asistencias():
-    if request.method == 'POST':
-        pass
+    # Fechas predeterminadas (si no se selecciona ninguna)
+    inicio_default = datetime(2024, 10, 14)
+    fin_default = datetime(2024, 10, 18)
 
-    return render_template('asistencias.html', username=current_user.id, active_page = 'asistencia', title="Asistencias")
+    if request.method == 'POST':
+        # Obtener las fechas seleccionadas en el formulario
+        inicio_str = request.form.get('inicio')
+        fin_str = request.form.get('fin')
+
+        # Convertir las fechas a objetos datetime
+        if inicio_str and fin_str:
+            inicio = datetime.strptime(inicio_str, '%Y-%m-%d')
+            fin = datetime.strptime(fin_str, '%Y-%m-%d')
+
+            # Validar si la diferencia es mayor a 15 días
+            diferencia = (fin - inicio).days
+            if diferencia > 10:
+                flash('El rango de fechas no puede ser mayor a 10 días.', 'danger')
+                inicio = inicio_default
+                fin = fin_default
+        else:
+            inicio = inicio_default
+            fin = fin_default
+    else:
+        inicio = inicio_default
+        fin = fin_default
+
+    # Generar la lista de fechas a mostrar
+    fechas = generar_fechas(inicio, fin)
+
+    return render_template('asistencias.html', asistencias=asistencia_datos, fechas=fechas, inicio=inicio.strftime('%Y-%m-%d'), fin=fin.strftime('%Y-%m-%d'), username=current_user.id, active_page='asistencia', title="Asistencias")
+
 
 #asignacion de materias
 @app.route('/asignaciones', methods = ['GET', "POST"])
