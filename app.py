@@ -56,7 +56,7 @@ def generar_fechas(inicio, fin):
 # Rutas
 
 #inicio de sesion
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form['username']
@@ -93,10 +93,10 @@ def materias():
             materia = request.form['materia']
 
             if not materia:
-                flash("Faltan datos")
+                flash("Faltan datos",'warning')
             else:
                 MateriasMySQL.ingresarMaterias(materia)
-                flash("Los datos fueron guardados.")
+                flash("Los datos fueron guardados.","success")
                 return redirect(url_for('materias'))
         
         elif 'modificar' in request.form:
@@ -104,20 +104,20 @@ def materias():
             materia = request.form['materia']
 
             if not id or not materia:
-                flash("Faltan datos")
+                flash("Faltan datos",'warning')
             else:
                 MateriasMySQL.modificarMateria(id, materia)
-                flash("Los datos fueron modificados.")
+                flash("Los datos fueron modificados.","success")
                 return redirect(url_for('materias'))
 
         elif 'eliminar' in request.form:
             id = request.form['id']
 
             if not id:
-                flash("Faltan datos")
+                flash("Faltan datos",'warning')
             else:
                 MateriasMySQL.eliminarMateria(id)
-                flash("Los datos fueron eliminados.")
+                flash("Los datos fueron eliminados.","success")
                 return redirect(url_for('materias'))
 
     lista_materias = MateriasMySQL.mostrarMaterias()
@@ -134,10 +134,10 @@ def salones():
             edificio_id = request.form['edificio']
 
             if not edificio_id or not salon:
-                flash("Faltan datos")
+                flash("Faltan datos",'warning')
             else:
                 SalonesMySQL.ingresarSalon(salon, edificio_id)
-                flash("Los datos fueron guardados.")
+                flash("Los datos fueron guardados.","success")
                 return redirect(url_for('salones'))
 
         elif 'modificar' in request.form:
@@ -145,20 +145,20 @@ def salones():
             edificio_id = request.form['edificioSelect']
 
             if not salon or not edificio_id:
-                flash("Faltan datos")
+                flash("Faltan datos",'warning')
             else:
                 SalonesMySQL.modificarSalon(salon, edificio_id)
-                flash("Los datos fueron modificados.")
+                flash("Los datos fueron modificados.","success")
                 return redirect(url_for('salones'))
 
         elif 'eliminar' in request.form:
             salon = request.form['salon']
 
             if not id:
-                flash("Faltan datos")
+                flash("Faltan datos",'warning')
             else:
                 SalonesMySQL.eliminarSalon(salon)
-                flash("Los datos fueron eliminados.")
+                flash("Los datos fueron eliminados.","success")
                 return redirect(url_for('salones'))
 
     lista_salones = SalonesMySQL.mostrarSalones()
@@ -175,10 +175,10 @@ def edificios():
             edificio = request.form['edificio']
 
             if not edificio:
-                flash("Faltan datos")
+                flash("Faltan datos",'warning')
             else:
                 EdificiosMySQL.ingresarEdifico(edificio)
-                flash("Los datos fueron guardados.")
+                flash("Los datos fueron guardados.","success")
                 return redirect(url_for('edificios'))
         
         elif 'modificar' in request.form:
@@ -186,20 +186,20 @@ def edificios():
             edificio = request.form['edificio']
 
             if not id or not edificio:
-                flash("Faltan datos")
+                flash("Faltan datos",'warning')
             else:
                 EdificiosMySQL.modificarEdificio(id, edificio)
-                flash("Los datos fueron modificados.")
+                flash("Los datos fueron modificados.","success")
                 return redirect(url_for('edificios'))
 
         elif 'eliminar' in request.form:
             id = request.form['id']
 
             if not id:
-                flash("Faltan datos")
+                flash("Faltan datos",'warning')
             else:
                 EdificiosMySQL.eliminarEdificio(id)
-                flash("Los datos fueron eliminados.")
+                flash("Los datos fueron eliminados.","success")
                 return redirect(url_for('edificios'))
 
     lista_edificios = EdificiosMySQL.mostrarEdificios()
@@ -218,10 +218,10 @@ def reportes():
             status = request.form['status']
 
             if not alumno or not fecha or not descripcion or not status:
-                flash("Faltan datos")
+                flash("Faltan datos",'warning')
             else:
                 ReportesMySQL.ingresarReportes(alumno,fecha,descripcion,accion,status)
-                flash("Los datos fueron guardados.")
+                flash("Los datos fueron guardados.","success")
                 return redirect(url_for('reportes'))
 
         elif 'modificar' in request.form:
@@ -233,20 +233,20 @@ def reportes():
             status = request.form['estado']
 
             if not id or not alumno or not fecha or not descripcion or not status:
-                flash("Faltan datos")
+                flash("Faltan datos",'warning')
             else:
                 ReportesMySQL.modificarReporte(id,alumno,fecha,descripcion,accion,status)
-                flash("Los datos fueron modificados.")
+                flash("Los datos fueron modificados.","success")
                 return redirect(url_for('reportes'))
 
         elif 'eliminar' in request.form:
             id = request.form['id']
 
             if not id:
-                flash("Faltan datos")
+                flash("Faltan datos",'warning')
             else:
                 ReportesMySQL.eliminarReporte(id)
-                flash("Los datos fueron eliminados.")
+                flash("Los datos fueron eliminados.","success")
                 return redirect(url_for('reportes'))
 
 
@@ -266,10 +266,10 @@ def grupos():
             salon = request.form.get('salon')
 
             if not docente or not grupo or not salon:
-                flash("Faltan datos")
+                flash("Faltan datos",'warning')
             else:
                 GruposMySQL.ingresarGrupos(docente, grupo, salon)
-                flash("Los datos fueron guardados.")
+                flash("Los datos fueron guardados.","success")
                 return redirect(url_for('grupos'))
 
         if 'modificar' in request.form:
@@ -279,20 +279,20 @@ def grupos():
             salon = request.form.get('salon')
 
             if not id or not docente or not grupo or not salon:
-                flash("Faltan datos")
+                flash("Faltan datos",'warning')
             else:
                 GruposMySQL.modificarGrupo(docente, grupo, salon, id)
-                flash("Los datos fueron modificados.")
+                flash("Los datos fueron modificados.","success")
                 return redirect(url_for('grupos'))
 
         if 'eliminar' in request.form:
             id = request.form['id']
 
             if not id:
-                flash("Faltan datos")
+                flash("Faltan datos",'warning')
             else:
                 GruposMySQL.eliminarGrupo(id)
-                flash("Los datos fueron eliminados.")
+                flash("Los datos fueron eliminados.","success")
                 return redirect(url_for('grupos'))
 
     lista_salones = SalonesMySQL.mostrarSalones()
@@ -347,10 +347,10 @@ def asignaciones():
             materia = request.form.get('materia')
 
             if not grupo or not materia:
-                flash("Faltan datos")
+                flash("Faltan datos",'warning')
             else:
                 AsignacionMySQL.ingresarAsignaciones(grupo, materia)
-                flash("Los datos fueron guardados.")
+                flash("Los datos fueron guardados.","success")
                 return redirect(url_for('asignaciones'))
 
         if 'modificar' in request.form:
@@ -359,20 +359,20 @@ def asignaciones():
             materia = request.form.get('materia')
 
             if not id or not grupo or not materia:
-                flash("Faltan datos")
+                flash("Faltan datos",'warning')
             else:
                 AsignacionMySQL.modificarAsignacion(grupo, materia, id)
-                flash("Los datos fueron modificados.")
+                flash("Los datos fueron modificados.","success")
                 return redirect(url_for('asignaciones'))
 
         if 'eliminar' in request.form:
             id = request.form['id']
 
             if not id:
-                flash("Faltan datos")
+                flash("Faltan datos",'warning')
             else:
                 AsignacionMySQL.eliminarAsignacion(id)
-                flash("Los datos fueron eliminados.")
+                flash("Los datos fueron eliminados.","success")
                 return redirect(url_for('asignaciones'))
 
 
@@ -392,10 +392,10 @@ def alumnos():
             grupo = request.form.get('grupo')
 
             if not alumno or not grupo:
-                flash("Faltan datos")
+                flash("Faltan datos",'warning')
             else:
                 AlumnoMySQL.ingresarAlumnos(alumno, grupo)
-                flash("Los datos fueron guardados.")
+                flash("Los datos fueron guardados.","success")
                 return redirect(url_for('alumnos'))
             
         if 'modificar' in request.form:
@@ -404,20 +404,20 @@ def alumnos():
             grupo = request.form.get('grupo')
 
             if not alumno or not grupo or not id:
-                flash("Faltan datos")
+                flash("Faltan datos",'warning')
             else:
                 AlumnoMySQL.modificarAlumno(alumno, grupo, id)
-                flash("Los datos fueron modificados.")
+                flash("Los datos fueron modificados.","success")
                 return redirect(url_for('alumnos'))
             
         if 'eliminar' in request.form:
             id = request.form['id']
 
             if not id:
-                flash("Faltan datos")
+                flash("Faltan datos",'warning')
             else:
                 AlumnoMySQL.eliminarAlumno(id)
-                flash("Los datos fueron eliminados.")
+                flash("Los datos fueron eliminados.","success")
                 return redirect(url_for('alumnos'))
         
     lista_grupos = GruposMySQL.mostrarGrupos()
