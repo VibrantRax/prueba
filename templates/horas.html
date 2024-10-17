@@ -4,6 +4,7 @@
     {% include 'base.html' %}
 </head>
 <body>
+    
     <!-- barra lateral -->
     {% include 'sidebar.html' %}
     <div class="contenido">
@@ -11,48 +12,35 @@
     </div>
     
     <!-- Contenido -->
-    <main>
+     <main>
         <div class="container-fluid">
             <div class="row">
 
                 <!--Titulo-->
                 <div class="col-md-12 d-flex justify-content-between align-items-center mb-3">
-                    <h2>Grupos</h2>
+                    <h2>Horas</h2>
                 </div>
 
-                <!--Formulario de reportes-->
-                <div class="col-md-12 collapse mb-4" id="formGrupos">
+                <!--Formulario de horas-->
+                <div class="col-md-12 collapse mb-4" id="formHoras">
                     <div class="card">
                         <div class="card-header card-header col-md-12 d-flex justify-content-between align-items-center mb-3">
-                                <span>Formulario de Reportes</span>
-                                <button type="button" class="btn-close" data-bs-toggle="collapse" data-bs-target="#formGrupos" aria-expanded="false" aria-controls="formGrupos" aria-label="Close"></button>
+                                <span>Formulario de horas</span>
+                                <button type="button" class="btn-close" data-bs-toggle="collapse" data-bs-target="#formHoras" aria-expanded="false" aria-controls="formHoras" aria-label="Close"></button>
                         </div>
                         <div class="card-body">
                             <form method="POST">
-                               <div class="row mb-3">
-                                    <div class="col-md-6 col-sm-12">
-                                        <label for="docente" class="form-label">Docente</label>
-                                        <select name="docente" id="docente" class="form-select">
-                                            <option value="">Elige un docente</option>
-                                            <option value="1">Juan</option>
-                                            <option value="2">Czar</option>
-                                        </select>
+                                <div class="row mb-3">
+                                    <div class="col-md-3 col-sm-12">
+                                        <label for="inicio" class="form-label">Hora de inicio</label>
+                                        <input id="inicio" name="inicio" type="time" min="07:00" max="14:00" class="form-control">
                                     </div>
-                                    <div class="col-md-6 col-sm-12">
-                                        <label for="grupo" class="form-label">Nombre del Grupos</label>
-                                        <input id="grupo" name="grupo" type="text" class="form-control">
+                                    <div class="col-md-3 col-sm-12">
+                                        <label for="fin" class="form-label">Hora de finalizacion</label>
+                                        <input id="fin" name="fin" type="time" min="07:00" max="14:00" class="form-control">
                                     </div>
-                                    <div class="col-md-6 col-sm-12">
-                                        <label for="salon" class="form-label">Salon</label>
-                                        <select name="salon" id="salon" class="form-select">
-                                            <option value="">Elige un salon</option>
-                                            {% for salon in salones %}
-                                                <option value="{{ salon[0] }}">{{ salon[0] }} — {{ salon[1] }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                               </div>
-                               <div class="d-flex justify-content-end">
+                                </div>
+                                <div class="d-flex justify-content-end">
                                     <div class="btn-group" role="group" aria-label="Basic mixed styles example">
                                         <button type="submit" name="guardar" class="btn btn-success">Guardar</button>
                                     </div>    
@@ -62,33 +50,35 @@
                     </div>
                 </div>
 
-                <!-- Lista de grupos --> 
+                <!-- Lista de horas --> 
                 <div class="col-md-12 mb-4">
                     <div class="card">
-                        <div class="card-header">Lista de grupos</div>
+                        <div class="card-header">Lista de horas</div>
                         <div class="card-body">
                             <table class="table table-hover table-borderless">
                                 <thead>
                                     <tr>
-                                        <th class="text-center"><b>ID del Docente</b></th>
-                                        <th class="text-center"><b>Nombre del Grupo</b></th>
-                                        <th class="text-center"><b>Salón</b></th>
-                                        <th class="text-center"><b>Acciones</b></th>
+                                        <th class="text-center"><b>ID</b></th>
+                                        <th class="text-center"><b>Hora de inicio</b></th>
+                                        <th class="text-center"><b>Hora de finalizacion</b></th>
+                                        <th class="text-center"><b>Fecha de modificacion</b></th>
+                                        <th class="text-center"><b>Accion</b></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for grupo in grupos %}
+                                    {% for hora in horas %}
                                         <tr>
-                                            <td class="text-center">{{ grupo[1] }}</td>
-                                            <td class="text-center">{{ grupo[2] }}</td>
-                                            <td class="text-center">{{ grupo[3] }}</td>
+                                            <td class="text-center">{{ hora[0] }}</td>
+                                            <td class="text-center">{{ hora[1].seconds // 3600 }}:{% set minutos = (hora[1].seconds % 3600) // 60 %}{{ '{:02}'.format(minutos) }}</td>
+                                            <td class="text-center">{{ hora[2].seconds // 3600 }}:{% set minutos = (hora[2].seconds % 3600) // 60 %}{{ '{:02}'.format(minutos) }}</td>
+                                            <td class="text-center">{{ hora[3].strftime('%d/%m/%Y') }}</td>
                                             <td class="text-center">
                                                 <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal"
-                                                    data-id="{{ grupo[0] }}" data-docente="{{ grupo[1] }}" data-nombre="{{ grupo[2] }}" data-salon="{{ grupo[3] }}">
+                                                    data-id="{{ hora[0] }}" data-inicio="{{ '%02d:%02d' % (hora[1].seconds // 3600, (hora[1].seconds % 3600) // 60) }}" data-fin="{{ '%02d:%02d' % (hora[2].seconds // 3600, (hora[2].seconds % 3600) // 60) }}">
                                                     <ion-icon name="create"></ion-icon> Modificar
                                                 </button>
                                                 <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#eliminarModal"
-                                                    data-id="{{ grupo[0] }}" data-docente="{{ grupo[1] }}" data-nombre="{{ grupo[2] }}" data-salon="{{ grupo[3] }}">
+                                                    data-id="{{ hora[0] }}" data-inicio="{{ '%02d:%02d' % (hora[1].seconds // 3600, (hora[1].seconds % 3600) // 60) }}" data-fin="{{ '%02d:%02d' % (hora[2].seconds // 3600, (hora[2].seconds % 3600) // 60) }}">
                                                     <ion-icon name="trash"></ion-icon> Eliminar
                                                 </button>
                                             </td>
@@ -102,17 +92,17 @@
 
                 <div class="col-md-12 d-flex justify-content-between align-items-center mb-3">
                     <div></div>
-                    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#formGrupos" aria-expanded="false" aria-controls="formGrupos">
-                        <ion-icon name="add-circle"></ion-icon> Añadir Grupo 
+                    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#formHoras" aria-expanded="false" aria-controls="formHoras">
+                        <ion-icon name="add-circle"></ion-icon> Añadir horario
                     </button>
                 </div>
 
             </div>
         </div>
         {% include 'message.html' %}
-    </main>
+     </main>
 
-    <!-- Boton menu oculto -->
+     <!-- Boton menu oculto -->
     <div class="menu">
         <ion-icon name="menu-outline"></ion-icon>
         <ion-icon name="close-outline"></ion-icon>
@@ -129,31 +119,18 @@
                 <div class="modal-body">
                     <form method="POST">
                         <div class="row mb-3">
-                            <div class="col-md-6 col-sm-12">
+                            <div class="col-md-3 col-sm-12">
                                 <label for="id" class="form-label">ID</label>
                                 <input id="id" name="id" type="text" class="form-control" readonly>
                             </div>
-                             <div class="col-md-6 col-sm-12">
-                                 <label for="docente" class="form-label">Docente</label>
-                                 <select name="docente" id="docente" class="form-select">
-                                     <option value="">Elige un docente</option>
-                                     <option value="1">Juan</option>
-                                     <option value="2">Czar</option>
-                                 </select>
-                             </div>
-                             <div class="col-md-6 col-sm-12">
-                                 <label for="grupo" class="form-label">Nombre del Grupos</label>
-                                 <input id="grupo" name="grupo" type="text" class="form-control">
-                             </div>
-                             <div class="col-md-6 col-sm-12">
-                                 <label for="salon" class="form-label">Salon</label>
-                                 <select name="salon" id="salon" class="form-select">
-                                     <option value="">Elige un salon</option>
-                                     {% for salon in salones %}
-                                         <option value="{{ salon[0] }}">{{ salon[0] }} — {{ salon[1] }}</option>
-                                     {% endfor %}
-                                 </select>
-                             </div>
+                            <div class="col-md-3 col-sm-12">
+                                <label for="inicio" class="form-label">Hora de inicio</label>
+                                <input id="inicio" name="inicio" type="time" min="07:00" max="14:00" class="form-control">
+                            </div>
+                            <div class="col-md-3 col-sm-12">
+                                <label for="fin" class="form-label">Hora de finalizacion</label>
+                                <input id="fin" name="fin" type="time" min="07:00" max="14:00" class="form-control">
+                            </div>
                         </div>
                         <div class="d-flex justify-content-end">
                             <div class="btn-group" role="group" aria-label="Basic mixed styles example">
@@ -176,30 +153,17 @@
                 <div class="modal-body">
                     <form method="POST">
                         <div class="row mb-3">
-                            <div class="col-md-6 col-sm-12">
+                            <div class="col-md-3 col-sm-12">
                                 <label for="id" class="form-label">ID</label>
                                 <input id="id" name="id" type="text" class="form-control" readonly>
                             </div>
-                            <div class="col-md-6 col-sm-12">
-                                <label for="docente" class="form-label">Docente</label>
-                                <select name="docente" id="docente" class="form-select" disabled>
-                                    <option value="">Elige un docente</option>
-                                    <option value="1">Juan</option>
-                                    <option value="2">Czar</option>
-                                </select>
+                            <div class="col-md-3 col-sm-12">
+                                <label for="inicio" class="form-label">Hora de inicio</label>
+                                <input id="inicio" name="inicio" type="time" min="07:00" max="14:00" class="form-control" readonly>
                             </div>
-                            <div class="col-md-6 col-sm-12">
-                                <label for="grupo" class="form-label">Nombre del Grupo</label>
-                                <input id="grupo" name="grupo" type="text" class="form-control" readonly>
-                            </div>
-                            <div class="col-md-6 col-sm-12">
-                                <label for="salon" class="form-label">Salón</label>
-                                <select name="salon" id="salon" class="form-select" disabled>
-                                    <option value="">Elige un salón</option>
-                                    {% for salon in salones %}
-                                        <option value="{{ salon[0] }}">{{ salon[0] }} — {{ salon[1] }}</option>
-                                    {% endfor %}
-                                </select>
+                            <div class="col-md-3 col-sm-12">
+                                <label for="fin" class="form-label">Hora de finalizacion</label>
+                                <input id="fin" name="fin" type="time" min="07:00" max="14:00" class="form-control" readonly>
                             </div>
                         </div>
                         <div class="d-flex justify-content-end">
@@ -214,9 +178,10 @@
         </div>
     </div>
 
-     <!-- Scripts -->
+    <!-- Scripts -->
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
     <script>
+
         var editModal = document.getElementById('editModal');
         editModal.addEventListener('show.bs.modal', function (event) {
             // Botón que activó el modal
@@ -224,21 +189,18 @@
 
             // Extraer la información de los atributos data-*
             var id = button.getAttribute('data-id');
-            var docente = button.getAttribute('data-docente');
-            var nombre = button.getAttribute('data-nombre');
-            var salon = button.getAttribute('data-salon');
+            var inicio = button.getAttribute('data-inicio');
+            var fin = button.getAttribute('data-fin');
 
             // Obtener los elementos de los campos en el modal
-            var modalId = editModal.querySelector('#editModal #id')
-            var modalDocente = editModal.querySelector('#editModal #docente');
-            var modalNombre = editModal.querySelector('#editModal #grupo');
-            var modalSalon = editModal.querySelector('#editModal #salon');
+            var modalId = editModal.querySelector('#id');
+            var modalInicio = editModal.querySelector('#inicio');
+            var modalFin = editModal.querySelector('#fin');
 
             // Actualizar el contenido del modal con los valores obtenidos
             modalId.value = id;
-            modalDocente.value = docente;
-            modalNombre.value = nombre;
-            modalSalon.value = salon;
+            modalInicio.value = inicio;
+            modalFin.value = fin;
         });
 
         // Capturar el evento cuando se abre el modal de eliminar
@@ -249,21 +211,18 @@
             
             // Extraer la información de los atributos data-*
             var id = button.getAttribute('data-id');
-            var docente = button.getAttribute('data-docente');
-            var nombre = button.getAttribute('data-nombre');
-            var salon = button.getAttribute('data-salon');
-            
+            var inicio = button.getAttribute('data-inicio');
+            var fin = button.getAttribute('data-fin');
+
             // Obtener los elementos de los campos en el modal
             var modalId = eliminarModal.querySelector('#id');
-            var modalDocente = eliminarModal.querySelector('#docente');
-            var modalNombre = eliminarModal.querySelector('#grupo');
-            var modalSalon = eliminarModal.querySelector('#salon');
+            var modalInicio = eliminarModal.querySelector('#inicio');
+            var modalFin = eliminarModal.querySelector('#fin');
 
             // Actualizar el contenido del modal con los valores obtenidos
             modalId.value = id;
-            modalDocente.value = docente;
-            modalNombre.value = nombre;
-            modalSalon.value = salon;
+            modalInicio.value = inicio;
+            modalFin.value = fin;
         });
 
         // Función que se ejecuta cuando el DOM está completamente cargado

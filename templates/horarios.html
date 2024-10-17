@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include 'base.html' %}
+</head>
+<body>
+    <!-- barra lateral -->
+    {% include 'sidebar.html' %}
+    <div class="contenido">
+        {% block content %}{% endblock %}
+    </div>
+    
+    <!-- Contenido -->
+    <main>
+
+        <div class="container-fluid">
+            <div class="row">
+
+                <!--Titulo-->
+                <div class="col-md-12 d-flex justify-content-between align-items-center mb-3">
+                    <h2>Horarios</h2>
+                </div>
+
+                <!--Formulario de horarios-->
+                <div class="col-md-12 collapse mb-4" id="formHorario">
+                    <div class="card">
+                        <div class="card-header card-header col-md-12 d-flex justify-content-between align-items-center mb-3">
+                                <span>Formulario de calificaciones</span>
+                                <button type="button" class="btn-close" data-bs-toggle="collapse" data-bs-target="#formHorario" aria-expanded="false" aria-controls="formHorario" aria-label="Close"></button>
+                        </div>
+                        <div class="card-body">
+                            <form method="POST">
+                                <div class="row mb-3">
+                                    <div class="col-md-3 col-sm-12">
+                                        <label for="materia" class="form-label">Materia</label>
+                                        <select name="materia" id="materia" class="form-select">
+                                            <option value="">Elige una materia</option>
+                                            {% for materia in materias %}
+                                                <option value="{{ materia[0] }}">{{ materia[1] }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3 col-sm-12">
+                                        <label for="dia" class="form-label">Dia de la semana</label>
+                                        <select name="dia" id="dia" class="form-select">
+                                            <option value="">Elige un dia de la semana</option>
+                                            <option value="Lunes">Lunes</option>
+                                            <option value="Martes">Martes</option>
+                                            <option value="Miercoles">Miercoles</option>
+                                            <option value="Jueves">Jueves</option>
+                                            <option value="Viernes">Viernes</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3 col-sm-12">
+                                        <label for="hora" class="form-label">Hora de inicio</label>
+                                        <select name="hora" id="hora" class="form-select">
+                                            <option value="">Elige una hora</option>
+                                            {% for hora in horas %}
+                                            <option value="{{ hora[0] }}">{{ hora[1].seconds // 3600 }}:{% set minutos = (hora[1].seconds % 3600) // 60 %}{{ '{:02}'.format(minutos) }} — {{ hora[2].seconds // 3600 }}:{% set minutos = (hora[2].seconds % 3600) // 60 %}{{ '{:02}'.format(minutos) }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-end">
+                                    <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                        <button type="submit" name="guardar" class="btn btn-success">Guardar</button>
+                                    </div>    
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lista de calificaciones --> 
+                <div class="col-md-12 mb-4">
+                    <div class="card">
+                        <div class="card-header"></div>
+                        <div class="card-body">
+                            <table class="table table-hover table-borderless">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center"><b>Materia</b></th>
+                                        <th class="text-center"><b>Dia de la semana</b></th>
+                                        <th class="text-center"><b>Hora de inicio</b></th>
+                                        <th class="text-center"><b>Hora de finalizacion</b></th>
+                                        <th class="text-center"><b>Fecha de modificacion</b></th>
+                                        <th class="text-center"><b>Accion</b></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for horario in horarios %}
+                                        <tr>
+                                            <td class="text-center">{{ horario[2] }}</td>
+                                            <td class="text-center">{{ horario[3] }}</td>
+                                            <td class="text-center">{{ horario[5].seconds // 3600 }}:{% set minutos = (horario[5].seconds % 3600) // 60 %}{{ '{:02}'.format(minutos) }}</td>
+                                            <td class="text-center">{{ horario[6].seconds // 3600 }}:{% set minutos = (horario[6].seconds % 3600) // 60 %}{{ '{:02}'.format(minutos) }}</td>
+                                            <td class="text-center">{{ horario[7].strftime('%d/%m/%Y') }}</td>
+                                            <td class="text-center">
+                                                <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal"
+                                                    data-id="{{ horario[0] }}" data-materia="{{ horario[1] }}" data-dia="{{ horario[3] }}" data-hora="{{ horario[4] }}">
+                                                    <ion-icon name="create"></ion-icon> Modificar
+                                                </button>
+                                                <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#eliminarModal"
+                                                    data-id="{{ horario[0] }}" data-materia="{{ horario[1] }}" data-dia="{{ horario[3] }}" data-hora="{{ horario[4] }}">
+                                                    <ion-icon name="trash"></ion-icon> Eliminar
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12 d-flex justify-content-between align-items-center mb-3">
+                    <div></div>
+                    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#formHorario" aria-expanded="false" aria-controls="formHorario">
+                        <ion-icon name="add-circle"></ion-icon> Añadir horario
+                    </button>
+                </div>
+
+            </div>
+        </div>
+        {% include 'message.html' %}
+    </main>
+
+    <!-- Boton menu oculto -->
+    <div class="menu">
+        <ion-icon name="menu-outline"></ion-icon>
+        <ion-icon name="close-outline"></ion-icon>
+    </div>
+
+    <!-- Modal editar -->
+    <div class="modal-xl modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Modificar</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST">
+                        <div class="row mb-3">
+                            <div class="col-md-6 col-sm-12">
+                                <label for="id" class="form-label">ID</label>
+                                <input id="id" name="id" type="text" class="form-control" readonly>
+                            </div>
+                            <div class="col-md-6 col-sm-12">
+                                <label for="materia" class="form-label">Materia</label>
+                                <select name="materia" id="materia" class="form-select">
+                                    <option value="">Elige una materia</option>
+                                    {% for materia in materias %}
+                                        <option value="{{ materia[0] }}">{{ materia[1] }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6 col-sm-12">
+                                <label for="dia" class="form-label">Dia de la semana</label>
+                                <select name="dia" id="dia" class="form-select">
+                                    <option value="">Elige un dia de la semana</option>
+                                    <option value="Lunes">Lunes</option>
+                                    <option value="Martes">Martes</option>
+                                    <option value="Miercoles">Miercoles</option>
+                                    <option value="Jueves">Jueves</option>
+                                    <option value="Viernes">Viernes</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 col-sm-12">
+                                <label for="hora" class="form-label">Hora de inicio</label>
+                                <select name="hora" id="hora" class="form-select">
+                                    <option value="">Elige una hora</option>
+                                    {% for hora in horas %}
+                                    <option value="{{ hora[0] }}">{{ hora[1].seconds // 3600 }}:{% set minutos = (hora[1].seconds % 3600) // 60 %}{{ '{:02}'.format(minutos) }} — {{ hora[2].seconds // 3600 }}:{% set minutos = (hora[2].seconds % 3600) // 60 %}{{ '{:02}'.format(minutos) }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                <button type="submit" name="modificar" class="btn btn-warning">Modificar</button>
+                            </div>    
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal eliminar -->
+    <div class="modal-xl modal fade" id="eliminarModal" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="eliminarModalLabel">Eliminar</h5>
+                </div>
+                <div class="modal-body">
+                    <form method="POST">
+                        <div class="row mb-3">
+                            <div class="col-md-6 col-sm-12">
+                                <label for="id" class="form-label">ID</label>
+                                <input id="id" name="id" type="text" class="form-control" readonly>
+                            </div>
+                            <div class="col-md-6 col-sm-12">
+                                <label for="materia" class="form-label">Materia</label>
+                                <select name="materia" id="materia" class="form-select" disabled>
+                                    <option value="">Elige una materia</option>
+                                    {% for materia in materias %}
+                                        <option value="{{ materia[0] }}">{{ materia[1] }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6 col-sm-12">
+                                <label for="dia" class="form-label">Dia de la semana</label>
+                                <select name="dia" id="dia" class="form-select" disabled>
+                                    <option value="">Elige un dia de la semana</option>
+                                    <option value="Lunes">Lunes</option>
+                                    <option value="Martes">Martes</option>
+                                    <option value="Miercoles">Miercoles</option>
+                                    <option value="Jueves">Jueves</option>
+                                    <option value="Viernes">Viernes</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 col-sm-12">
+                                <label for="hora" class="form-label">Hora de inicio</label>
+                                <select name="hora" id="hora" class="form-select" disabled>
+                                    <option value="">Elige una hora</option>
+                                    {% for hora in horas %}
+                                    <option value="{{ hora[0] }}">{{ hora[1].seconds // 3600 }}:{% set minutos = (hora[1].seconds % 3600) // 60 %}{{ '{:02}'.format(minutos) }} — {{ hora[2].seconds // 3600 }}:{% set minutos = (hora[2].seconds % 3600) // 60 %}{{ '{:02}'.format(minutos) }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                <button type="submit" name="eliminar" class="btn btn-danger">Eliminar</button>
+                                <button type="button" class="btn btn-success" data-bs-dismiss="modal" aria-label="Close">Cancelar</button>
+                            </div>    
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+    <script>
+        var editModal = document.getElementById('editModal');
+        editModal.addEventListener('show.bs.modal', function (event) {
+            // Botón que activó el modal
+            var button = event.relatedTarget;
+
+            // Extraer la información de los atributos data-*
+            var id = button.getAttribute('data-id');
+            var materia = button.getAttribute('data-materia');
+            var dia = button.getAttribute('data-dia');
+            var hora = button.getAttribute('data-hora');
+            var fin = button.getAttribute('data-fin');
+
+            // Obtener los elementos de los campos en el modal
+            var modalId = editModal.querySelector('#editModal #id')
+            var modalMateria = editModal.querySelector('#editModal #materia');
+            var modalDia = editModal.querySelector('#editModal #dia');
+            var modalHora = editModal.querySelector('#editModal #hora');
+            var modalFin = editModal.querySelector('#editModal #fin');
+
+            // Actualizar el contenido del modal con los valores obtenidos
+            modalId.value = id;
+            modalMateria.value = materia;
+            modalDia.value = dia;
+            modalHora.value = hora;
+        });
+
+        // Capturar el evento cuando se abre el modal de eliminar
+        var eliminarModal = document.getElementById('eliminarModal');
+        eliminarModal.addEventListener('show.bs.modal', function (event) {
+            // Botón que disparó el modal
+            var button = event.relatedTarget;
+            
+                    // Extraer la información de los atributos data-*
+            var id = button.getAttribute('data-id');
+            var materia = button.getAttribute('data-materia');
+            var dia = button.getAttribute('data-dia');
+            var hora = button.getAttribute('data-hora');
+
+            // Obtener los elementos de los campos en el modal
+            var modalId = eliminarModal.querySelector('#id');
+            var modalMateria = eliminarModal.querySelector('#materia');
+            var modalDia = eliminarModal.querySelector('#dia');
+            var modalHora = eliminarModal.querySelector('#hora');
+
+            // Actualizar el contenido del modal con los valores obtenidos
+            modalId.value = id;
+            modalMateria.value = materia;
+            modalDia.value = dia;
+            modalHora.value = hora;
+        });
+
+        // Función que se ejecuta cuando el DOM está completamente cargado
+        document.addEventListener('DOMContentLoaded', function () {
+            // Seleccionar todos los formularios de la página
+            var forms = document.querySelectorAll('form');
+            
+            // Iterar sobre cada formulario y reiniciarlo
+            forms.forEach(function(form) {
+                form.reset();
+            });
+        });
+    </script>
+</body>
+</html>

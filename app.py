@@ -9,6 +9,9 @@ from models.reportes import ReportesMySQL
 from models.grupo import GruposMySQL
 from models.asignacion import AsignacionMySQL
 from models.alumnos import AlumnoMySQL
+from models.calificacion import CalificacionesMySQL
+from models.horas import HorasMySQL
+from models.horarios import HorariosMySQL
 
 app = Flask(__name__)
 app.secret_key = "tu_secreto"  # Se requiere para usar flash
@@ -424,6 +427,170 @@ def alumnos():
     lista_alumnos = AlumnoMySQL.mostrarAlumnos()
 
     return render_template('alumnos.html', username=current_user.id, grupos = lista_grupos, alumnos = lista_alumnos, active_page = 'alumno', title="Alumnos")
+
+@app.route('/calificaciones', methods = ['GET', "POST"])
+def calificaciones():
+    if request.method == 'POST':
+        
+        if 'guardar' in request.form:
+            alumno = request.form.get('alumno')
+            materia = request.form.get('materia')
+            calificacion = request.form['calificacion']
+
+            if not alumno or not materia or not calificacion:
+                flash("Faltan datos",'warning')
+            else:
+                CalificacionesMySQL.ingresarCalificacion(alumno, materia, calificacion)
+                flash("Los datos fueron guardados.","success")
+                return redirect(url_for('calificaciones'))
+            
+        if 'modificar' in request.form:
+            id = request.form['id']
+            alumno = request.form.get('alumno')
+            materia = request.form.get('materia')
+            calificacion = request.form['calificacion']
+
+            if not alumno or not materia or not calificacion or not id:
+                flash("Faltan datos",'warning')
+            else:
+                CalificacionesMySQL.modificarCalificacion(alumno, materia, calificacion, id)
+                flash("Los datos fueron modificados.","success")
+                return redirect(url_for('calificaciones'))
+            
+        if 'eliminar' in request.form:
+            id = request.form['id']
+
+            if not id:
+                flash("Faltan datos",'warning')
+            else:
+                CalificacionesMySQL.eliminarCalificacion(id)
+                flash("Los datos fueron eliminados.","success")
+                return redirect(url_for('calificaciones'))
+
+    lista_calificaciones = CalificacionesMySQL.mostrarCalificaciones()
+    lista_materias = MateriasMySQL.mostrarMaterias()
+
+    return render_template('calificaciones.html', calificaciones = lista_calificaciones, materias = lista_materias, username=current_user.id, active_page = 'calificacion', title="Calificaciones")
+
+@app.route('/horas', methods = ['GET', "POST"])
+def horas():
+    if request.method == 'POST':
+
+        if 'guardar' in request.form:
+            fin = request.form.get('fin')
+            inicio = request.form.get('inicio')
+
+            if not fin or not inicio:
+                flash("Faltan datos",'warning')
+            else:
+                # Convertir las horas a objetos datetime
+                formato_hora = "%H:%M"
+                hora_inicio = datetime.strptime(inicio, formato_hora)
+                hora_fin = datetime.strptime(fin, formato_hora)
+
+                # Calcular la diferencia en minutos
+                diferencia_minutos = (hora_fin - hora_inicio).total_seconds() / 60
+                
+                if inicio == fin:
+                    flash("Las horas no pueden ser las mismas","danger")
+                    return redirect(url_for('horas'))
+                
+                elif diferencia_minutos < 49:
+                    flash('La hora de finalización debe ser al menos 50 minutos después de la hora de inicio.', 'danger')
+                    return redirect(url_for('horas'))
+                
+                else:
+                    HorasMySQL.ingresarHoras(inicio, fin)
+                    flash("Los datos fueron guardados.","success")
+                    return redirect(url_for('horas'))
+        
+        if 'modificar' in request.form:
+            id = request.form['id']
+            fin = request.form.get('fin')
+            inicio = request.form.get('inicio')
+
+            if not fin or not inicio or not id:
+                flash("Faltan datos",'warning')
+            else:
+                # Convertir las horas a objetos datetime
+                formato_hora = "%H:%M"
+                hora_inicio = datetime.strptime(inicio, formato_hora)
+                hora_fin = datetime.strptime(fin, formato_hora)
+
+                # Calcular la diferencia en minutos
+                diferencia_minutos = (hora_fin - hora_inicio).total_seconds() / 60
+                
+                if inicio == fin:
+                    flash("Las horas no pueden ser las mismas","danger")
+                    return redirect(url_for('horas'))
+                
+                elif diferencia_minutos < 49:
+                    flash('La hora de finalización debe ser al menos 50 minutos después de la hora de inicio.', 'danger')
+                    return redirect(url_for('horas'))
+                
+                else:
+                    HorasMySQL.modificarHora(inicio, fin, id)
+                    flash("Los datos fueron modificados.","success")
+                    return redirect(url_for('horas'))
+        
+        if 'eliminar' in request.form:
+            id = request.form['id']
+
+            if not id:
+                flash("Faltan datos",'warning')
+            else:
+                HorasMySQL.eliminarHora(id)
+                flash("Los datos fueron eliminados.","success")
+                return redirect(url_for('horas'))
+            
+    lista_horas = HorasMySQL.mostrarHoras()
+
+    return render_template('horas.html', horas = lista_horas, username=current_user.id, active_page = 'horas', title="Horas")
+
+@app.route('/horarios', methods = ['GET', "POST"])
+def horarios():
+    if request.method == 'POST':
+
+        if 'guardar' in request.form:
+            materia = request.form.get('materia')
+            dia = request.form.get('dia')
+            hora = request.form.get('hora')
+
+            if not materia or not dia or not hora:
+                flash("Faltan datos",'warning')
+            else:
+                HorariosMySQL.ingresarHorarios(materia, dia, hora)
+                flash("Los datos fueron guardados.","success")
+                return redirect(url_for('horarios'))
+            
+        if 'modificar' in request.form:
+            materia = request.form.get('materia')
+            dia = request.form.get('dia')
+            hora = request.form.get('hora')
+            id = request.form['id']
+
+            if not materia or not dia or not hora or not id:
+                flash("Faltan datos",'warning')
+            else:
+                HorariosMySQL.modificarHorario(materia, dia, hora, id)
+                flash("Los datos fueron modificados.","success")
+                return redirect(url_for('horarios'))
+            
+        if 'eliminar' in request.form:
+            id = request.form['id']
+
+            if not id:
+                flash("Faltan datos",'warning')
+            else:
+                HorariosMySQL.eliminarHorario(id)
+                flash("Los datos fueron eliminados.","success")
+                return redirect(url_for('horarios'))
+    
+    lista_horarios = HorariosMySQL.mostrarHorarios()
+    lista_materias = MateriasMySQL.mostrarMaterias()
+    lista_horas = HorasMySQL.mostrarHoras()
+
+    return render_template('horarios.html', materias = lista_materias, horarios = lista_horarios, horas = lista_horas, username=current_user.id, active_page = 'horario', title="Horarios")
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

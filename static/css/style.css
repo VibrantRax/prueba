@@ -123,10 +123,44 @@ body{
     font-size: 25px;
 }
 
+/*--------------> usario*/
+.barra-lateral .usuario{
+    margin-top: 15px;
+    width: 100%;
+    display: flex;
+    margin-bottom: 15px;
+}
+.barra-lateral .usuario img{
+    width: 50px;
+    min-width: 50px;
+    border-radius: 10px;
+}
+.barra-lateral .usuario .info-usuario{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--color-texto);
+    overflow: hidden;
+}
+.barra-lateral .usuario .nombre-email{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-left: 5px;
+}
+.barra-lateral .usuario .nombre{ 
+    font-size: 15px;
+    font-weight: 600;
+}
+.barra-lateral .usuario .saludo{
+    font-size: 20px;
+}
 
 /*--------------> Menu Navegación*/
 
 .barra-lateral .navegacion{
+    margin-top: 15px;
     height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
