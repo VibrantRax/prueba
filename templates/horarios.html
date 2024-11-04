@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include 'base.html' %}
+</head>
+<body>
+    <!-- barra lateral -->
+    {% include 'sidebar.html' %}
+    <div class="contenido">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Container principal -->
+    <main>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="text-light">Horarios</h2>
+                    <button id="btnAddHorario" class="btn btn-light mb-3">
+                        <ion-icon name="add-circle"></ion-icon> Agregar Horario
+                    </button>
+                </div>
+
+                <!-- Formulario Horarios -->
+                <div id="formContainer" class="card text-bg-dark d-none mb-4 col-md-12">
+                    <div class="card-body">
+                        <form id="horarioForm">
+                            <div class="row mb-3">
+                                <input type="hidden" id="horarioId" value="">
+                                <div class="col-md-6 col-sm-12">
+                                    <label for="MateriaId">Materia</label>
+                                    <select class="form-select" id="MateriaId" required>
+                                        <option value="">Selecciona una materia</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 col-sm-12">
+                                    <label for="SemanaDia">Dia</label>
+                                    <select class="form-select" id="SemanaDia" required>
+                                        <option value="">Elige un dia de la semana</option>
+                                        <option value="Lunes">Lunes</option>
+                                        <option value="Martes">Martes</option>
+                                        <option value="Miercoles">Miercoles</option>
+                                        <option value="Jueves">Jueves</option>
+                                        <option value="Viernes">Viernes</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 col-sm-12">
+                                    <label for="HoraId">Hora</label>
+                                    <select class="form-select" id="HoraId" required>
+                                        <option value="">Selecciona una hora</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-12 d-flex justify-content-between align-items-center mb-3">
+                                <div></div>
+                                <div class="btn-group">
+                                    <button type="submit" class="btn btn-success">Guardar</button>
+                                    <button type="button" class="btn btn-secondary ml-2" id="btnCancel">Cancelar</button>
+                                </div>
+                                
+                            </div>
+                        </form>
+                    </div>         
+                </div>
+
+                
+                <!-- Lista de Horarios -->
+                <div class="table-responsive">
+                    <table class=" align-middle text-center table table-dark table-striped d-none" id="horariosTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Materia</th>
+                                <th>Dia de la semana</th>
+                                <th>Hora</th>
+                                <th>Fecha de modificacion</th>
+                                <th>Status</th>
+                                <th>Personal que modifico</th>
+                                <th>Accion</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-group-divider" id="horariosTableBody"></tbody>                    
+                    </table>             
+                </div>
+                <br>
+                <div class="col-md-12 d-flex justify-content-between align-items-center mb-3">
+                    <div></div>
+                    
+                </div>
+            </div>
+        </div>
+        {% include 'message.html' %}
+    </main>
+
+    <div class="menu">
+        <ion-icon name="menu-outline"></ion-icon>
+        <ion-icon name="close-outline"></ion-icon>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/horarios.js') }}"></script>    
+    
+</body>
+</html>
