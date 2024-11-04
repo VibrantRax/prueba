@@ -3,17 +3,17 @@ from .conexion import ConexionMySQL  # Importa la clase de conexión
 import pymysql
 import requests
 
-# Clase que gestiona la Alumno de las grupos 
-class AlumnoMySQL:
-
+# Clase que gestiona las calificaciones
+class CalificacionesMySQL:
+    
     @staticmethod
-    def mostrarAlumnos():
+    def mostrarCalificaciones():
         try:
 
             cone = ConexionMySQL.cconexion()
             with cone.cursor() as cursor:
                 #consulta MySQL
-                    cursor.execute("SELECT alumnogrupo.*, grupo.GrupoID, grupo.GrupoNombre FROM alumnogrupo INNER JOIN grupo ON grupo.GrupoID = alumnogrupo.GrupoID WHERE alumnogrupo.AlumnoGrupoStatus = 'AC'")
+                    cursor.execute("SELECT calificacion.* , materia.MateriaID, materia.MateriaNombre FROM calificacion INNER JOIN materia ON materia.MateriaID = calificacion.MateriaID WHERE calificacion.CalificacionStatus = 'AC'")
                     miResultado = cursor.fetchall()
 
                     alumnos_info = {}
@@ -47,17 +47,17 @@ class AlumnoMySQL:
             cone.close()  # Cerrar la conexión
 
     @staticmethod
-    def mostrarAlumnosporID(id):
+    def mostrarCalificacionesporID(id):
         try:
             cone = ConexionMySQL.cconexion()
             with cone.cursor() as cursor:
 
                 # Consulta MySQL
                 sql = """
-                SELECT alumnogrupo.*, grupo.GrupoID, grupo.GrupoNombre 
-                FROM alumnogrupo 
-                INNER JOIN grupo ON grupo.GrupoID = alumnogrupo.GrupoID
-                WHERE alumnogrupo.AlumnoGrupoID = %s AND alumnogrupo.AlumnoGrupoStatus = 'AC'
+                SELECT calificacion.* , materia.MateriaID, materia.MateriaNombre
+                FROM calificacion
+                INNER JOIN materia ON materia.MateriaID = calificacion.MateriaID
+                WHERE calificacion.CalificacionID = %s AND calificacion.CalificacionStatus = 'AC'
                 """
 
                 values = (id,)
@@ -96,14 +96,15 @@ class AlumnoMySQL:
         finally:
             cursor.close()  # Cerrar el cursor
             cone.close()  # Cerrar la conexión
-    
+
     @staticmethod
-    def ingresarAlumnos(data, personal):
+    def ingresarCalificacion(data, personal):
         try:
+
             cone = ConexionMySQL.cconexion()
             with cone.cursor() as cursor:
-                cursor.execute("SELECT MAX(AlumnoGrupoID) FROM alumnogrupo")
-                max_id = cursor.fetchone()['MAX(AlumnoGrupoID)'] or 4000
+                cursor.execute("SELECT MAX(CalificacionID) FROM calificacion")
+                max_id = cursor.fetchone()['MAX(CalificacionID)'] or 4000
                 
                 # Asignación de valores
                 new_id = max_id + 1
@@ -111,41 +112,44 @@ class AlumnoMySQL:
                 status = 'AC'
 
                 #consulta MySQL
-                sql = """INSERT INTO alumnogrupo (AlumnoGrupoID, AlumnoID,
-                                                    GrupoID, AlumnoGrupoModificacion,
-                                                    AlumnoGrupoStatus, PersonalAdministrativoId) 
-                                    VALUES (%s, %s, %s, %s, %s, %s)"""
-                values = (new_id, data['AlumnoID'], data['GrupoID'], fechmodi, status, personal)
+                sql = """INSERT INTO calificacion (CalificacionID, AlumnoID, MateriaID, 
+                                                    CalificacionDetalle, CalificacionFechaModificacion, 
+                                                    CalificacionStatus, PersonalAdministrativoId) 
+                                    VALUES (%s, %s, %s, %s, %s, %s, %s)"""
+                values = (new_id, data['AlumnoID'], data['MateriaID'], data['CalificacionDetalle'], fechmodi, status, personal)
 
                 cursor.execute(sql, values)
                 cone.commit()
 
                 return new_id
-            
+
         except pymysql.Error as error:
             print(f"Error de ingreso de datos: {error}")
 
         finally:
-            cursor.close()  # Cerrar el cursor
-            cone.close()  # Cerrar la conexión
+            cursor.close()
+            cone.close()
 
     @staticmethod
-    def modificarAlumno(data, id, personal):
+    def modificarCalificacion(data, id, personal):
         try:
+
             fechmodi = datetime.now()
             cone = ConexionMySQL.cconexion()
             with cone.cursor() as cursor:
 
                 #consulta MySQL
-                sql ="""UPDATE alumnogrupo 
-                        SET AlumnoID = %s, GrupoID = %s, 
-                            AlumnoGrupoModificacion = %s, PersonalAdministrativoId = %s 
-                        WHERE AlumnoGrupoID = %s"""
-                values = (data['AlumnoID'], data['GrupoID'], fechmodi, personal, id)
+                sql ="""UPDATE calificacion 
+                    SET AlumnoID = %s, MateriaID = %s, CalificacionDetalle = %s, 
+                        CalificacionFechaModificacion = %s, PersonalAdministrativoId = %s 
+                    WHERE CalificacionID = %s"""
+                values = (data['AlumnoID'], data['MateriaID'], data['CalificacionDetalle'], fechmodi, personal, id)
 
                 cursor.execute(sql, values)
                 cone.commit()
 
+            cone = ConexionMySQL.cconexion()
+            cursor = cone.cursor()
             cone = ConexionMySQL.cconexion()
             cursor = cone.cursor()
 
@@ -153,19 +157,20 @@ class AlumnoMySQL:
             print(f"Error al modificar los datos: {error}")
 
         finally:
-            cursor.close()  # Cerrar el cursor
-            cone.close()  # Cerrar la conexión
+            cursor.close()
+            cone.close()
 
     @staticmethod
-    def eliminarAlumno(id, personal):
+    def eliminarCalificacion(id, personal):
         try:
+        
             #asignacion de valores
             fechmodi = datetime.now()
             cone = ConexionMySQL.cconexion()
             with cone.cursor() as cursor:
 
                 #consulta MySQL
-                sql = "UPDATE alumnogrupo SET AlumnoGrupoModificacion = %s, AlumnoGrupoStatus = 'IN', PersonalAdministrativoId = %s WHERE AlumnoGrupoID = %s"
+                sql = "UPDATE calificacion SET CalificacionFechaModificacion = %s, CalificacionStatus = 'IN', PersonalAdministrativoId = %s WHERE CalificacionID = %s"
                 values = (fechmodi,personal,id)
                 
                 cursor.execute(sql, values)

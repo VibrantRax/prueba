@@ -9,12 +9,10 @@ class HorasMySQL:
     def mostrarHoras():
         try:
             cone = ConexionMySQL.cconexion()
-            cursor = cone.cursor()
-
-            #consulta MySQL
-            cursor.execute("SELECT HoraID, HoraInicio, HoraFin, HoraFechaModificacion FROM hora WHERE HoraStatus = 'AC'")
-            miResultado = cursor.fetchall()
-            cone.commit()
+            with cone.cursor() as cursor:
+                #consulta MySQL
+                cursor.execute("SELECT * FROM hora WHERE HoraStatus = 'AC'")
+                miResultado = cursor.fetchall()
             return miResultado
         
         except pymysql.Error as error:
@@ -25,30 +23,50 @@ class HorasMySQL:
             cone.close()  # Cerrar la conexión
 
     @staticmethod
-    def ingresarHoras(inicio, fin):
+    def mostrarHorasporID(id):
         try:
             cone = ConexionMySQL.cconexion()
-            cursor = cone.cursor()
+            with cone.cursor() as cursor:
 
-            # Genera un nuevo ID para el grupo
-            cursor.execute("SELECT COUNT(*) FROM hora")
-            tids = cursor.fetchone()[0] + 1
+                #consulta MySQL
+                sql = "SELECT * FROM hora WHERE HoraID = %s AND HoraStatus = 'AC'"
+                values = (id)
+                cursor.execute(sql, values)
 
-            # Asignación de valores
-            fechmodi = datetime.now()  
-            admin = '0'
+                miResultado = cursor.fetchone()
+            return miResultado
+        
+        except pymysql.Error as error:
+            print(f"Error al mostrar datos: {error}")
 
+        finally:
+            cursor.close()  # Cerrar el cursor
+            cone.close()  # Cerrar la conexión
 
-            #consulta MySQL
-            sql = """INSERT INTO hora (HoraID, HoraInicio, HoraFin, 
-                                        HoraFechaModificacion, HoraStatus, 
-                                        PersonalAdministrativoId) 
-                                VALUES (%s, %s, %s, %s, 'AC', %s)"""
-            values = (tids, inicio, fin, fechmodi, admin)
+    @staticmethod
+    def ingresarHoras(data, personal):
+        try:
+            cone = ConexionMySQL.cconexion()
+            with cone.cursor() as cursor:
+                cursor.execute("SELECT MAX(HoraID) FROM hora")
+                max_id = cursor.fetchone()['MAX(HoraID)'] or 4000
+                
+                #asigacion de valores
+                new_id = max_id + 1
+                fechmodi = datetime.now()
+                status = 'AC'
 
-            cursor.execute(sql, values)
-            cone.commit()
-            print(f"Ahora hay {tids} registros en la tabla")
+                #consulta MySQL
+                sql = """INSERT INTO hora (HoraID, HoraInicio, HoraFin, 
+                                                HoraFechaModificacion, HoraStatus, 
+                                                PersonalAdministrativoId) 
+                                        VALUES (%s, %s, %s, %s, %s, %s)"""
+                values = (new_id, data['HoraInicio'], data['HoraFin'], fechmodi, status, personal)
+
+                cursor.execute(sql, values)
+                cone.commit()
+
+            return new_id
 
         except pymysql.Error as error:
             print(f"Error de ingreso de datos: {error}")
@@ -58,25 +76,21 @@ class HorasMySQL:
             cone.close()
 
     @staticmethod
-    def modificarHora(inicio, fin, id):
+    def modificarHora(data, id, personal):
         try:
+            fechmodi = datetime.now()
             cone = ConexionMySQL.cconexion()
-            cursor = cone.cursor()
-            
-            # Asignación de valores
-            fechmodi = datetime.now() 
-            admin = '0'
+            with cone.cursor() as cursor:
 
-            #consulta MySQL
-            sql ="""UPDATE hora 
-                    SET HoraInicio = %s, HoraFin = %s, 
-                        HoraFechaModificacion = %s, PersonalAdministrativoId = %s 
-                    WHERE HoraID = %s"""
-            values = (inicio, fin, fechmodi, admin, id)
+                #consulta MySQL
+                sql ="""UPDATE hora 
+                        SET HoraInicio = %s, HoraFin = %s, 
+                            HoraFechaModificacion = %s, PersonalAdministrativoId = %s 
+                        WHERE HoraID = %s"""
+                values = (data['HoraInicio'], data['HoraFin'], fechmodi, personal, id)
 
-            cursor.execute(sql, values)
-            cone.commit()
-            print(f"Hora con ID {id} fue actualizada.")
+                cursor.execute(sql, values)
+                cone.commit()
 
         except pymysql.Error as error:
             print(f"Error al modificar los datos: {error}")
@@ -86,20 +100,19 @@ class HorasMySQL:
             cone.close()
 
     @staticmethod
-    def eliminarHora(id):
+    def eliminarHora(id, personal):
         try:
-            cone = ConexionMySQL.cconexion()
-            cursor = cone.cursor()
-            admin = "0"
+            #asignacion de valores
             fechmodi = datetime.now()
+            cone = ConexionMySQL.cconexion()
+            with cone.cursor() as cursor:
 
-            #consulta MySQL
-            sql = "UPDATE hora SET HoraFechaModificacion = %s, HoraStatus = 'IN', PersonalAdministrativoId = %s WHERE HoraID = %s"
-            values = (fechmodi,admin,id)
-            
-            cursor.execute(sql, values)
-            cone.commit()
-            print(f"Hora con ID {id} fue eliminada.")
+                #consulta MySQL
+                sql = "UPDATE hora SET HoraFechaModificacion = %s, HoraStatus = 'IN', PersonalAdministrativoId = %s WHERE HoraID = %s"
+                values = (fechmodi,personal,id)
+                
+                cursor.execute(sql, values)
+                cone.commit()
         
         except pymysql.Error as error:
             print(f"Error al eliminar los datos: {error}")

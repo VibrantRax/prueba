@@ -15,24 +15,18 @@
                     <span>Inicio</span>
                 </a>
             </li>
+            {% if session.get('PersonalRolDescripcion') == 'Administrador' %}
             <li>
                 <a href="{{ url_for('alumnos') }}" class="{% if active_page == 'alumno' %}activo{% endif %}">
                     <ion-icon name="person-add"></ion-icon>
                     <span>Alumnos</span>
                 </a>
             </li>
-            {% if username == 'admin' %}
+            {% endif %}
             <li>
                 <a href="{{ url_for('asignaciones') }}" class="{% if active_page == 'asignacion' %}activo{% endif %}">
                     <ion-icon name="clipboard"></ion-icon>
                     <span>Asignación de materias</span>
-                </a>
-            </li>
-            {% endif %}
-            <li>
-                <a href="{{ url_for('asistencias') }}" class="{% if active_page == 'asistencia' %}activo{% endif %}">
-                    <ion-icon name="checkbox"></ion-icon>
-                    <span>Asistencias</span>
                 </a>
             </li>
             <li>
@@ -41,7 +35,6 @@
                     <span>Calificaciones</span>
                 </a>
             </li>
-            {% if username == 'admin' %}
             <li>
                 <a href="{{ url_for('edificios') }}" class="{% if active_page == 'edificios' %}activo{% endif %}">
                     <ion-icon name="business"></ion-icon>
@@ -55,16 +48,15 @@
                 </a>
             </li>
             <li>
-                <a href="{{ url_for('horas') }}" class="{% if active_page == 'horas' %}activo{% endif %}">
-                    <ion-icon name="time"></ion-icon>
-                    <span>Horas</span>
-                </a>
-            </li>
-            {% endif %}
-            <li>
                 <a href="{{ url_for('horarios') }}" class="{% if active_page == 'horario' %}activo{% endif %}">
                     <ion-icon name="calendar"></ion-icon>
                     <span>Horarios</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('horas') }}" class="{% if active_page == 'horas' %}activo{% endif %}">
+                    <ion-icon name="time"></ion-icon>
+                    <span>Horas</span>
                 </a>
             </li>
             <li>
@@ -78,15 +70,13 @@
                     <ion-icon name="receipt"></ion-icon>
                     <span>Reportes</span>
                 </a>
-            </li>
-            {% if username == 'admin' %}
+
             <li>
                 <a href="{{ url_for('salones') }}" class="{% if active_page == 'salon' %}activo{% endif %}">
                     <ion-icon name="desktop"></ion-icon>
                     <span>Salones</span>
                 </a>
             </li>
-            {% endif %}
         </ul>
     </nav>
 
@@ -95,17 +85,17 @@
     <div>
         <div class="linea"></div>
         <div class="usuario">
-            <img src="{{ url_for('static', filename='img/' + username + '.png') }}">
+            <img src="{{ url_for('static', filename='img/' + foto + '.png') }}">
             <div class="info-usuario">
                 <div class="nombre-email">
                     <span class="saludo">Bienvenido</span>
-                    <span class="nombre"><b>{{ username }}</b></span>
+                    <span class="nombre"><b>{{ session.get('PersonalNombre') }}</b></span>
                 </div>
             </div>
         </div>
         <a href="{{ url_for('logout') }}" class="boton">
             <ion-icon name="exit"></ion-icon>
-            <span>Cerrar Sesion</span>
+            <span>Cerrar Sesión</span>
         </a>
     </div>
 </div>

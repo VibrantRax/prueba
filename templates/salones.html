@@ -10,227 +10,83 @@
         {% block content %}{% endblock %}
     </div>
 
-    <!-- Contenido -->
+    <!-- Container principal -->
     <main>
-
         <div class="container-fluid">
             <div class="row">
-
-                <!--Titulo-->
                 <div class="col-md-12 d-flex justify-content-between align-items-center mb-3">
-                    <h2>Salones</h2>
+                    <h2 class="text-light">Salones</h2>
+                    <button id="btnAddSalon" class="btn btn-light mb-3">
+                        <ion-icon name="add-circle"></ion-icon> Agregar Salon
+                    </button>
                 </div>
 
-                <!--Formulario de salones-->
-                <div class="col-md-12 collapse mb-4" id="formSalones">
-                    <div class="card">
-                        <div class="card-header card-header col-md-12 d-flex justify-content-between align-items-center mb-3">
-                            <span>Formulario Salones</span>
-                            <button type="button" class="btn-close" data-bs-toggle="collapse" data-bs-target="#formSalones" aria-expanded="false" aria-controls="formSalones" aria-label="Close"></button>
-                        </div>
-                        <div class="card-body">
-                            <form method="POST">
-                                <div class="row mb-3">
-                                    <div class="col-md-6 col-sm-12">
-                                        <label for="salon" class="form-label">Salon</label>
-                                        <input type="number" id="salon" name="salon" min="1000" max="9999" class="form-control" required>
-                                    </div>
-                                    <div class="col-md-6 col-sm-12">
-                                        <label for="edificio">Edificio</label>
-                                        <select class="form-select" id="edificio" name="edificio" required>
-                                            <option value="">Elige un edificio</option>
-                                            {% for edificio in edificios %}
-                                                <option value="{{ edificio[0] }}">{{ edificio[1] }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
+                <!-- Formulario Salones-->
+                <div id="formContainer" class="card text-bg-dark d-none  mb-4 col-md-12">
+                    <div class="card-body">
+                        <form id="salonForm">
+                            <div class="row mb-3">
+                                <input type="hidden" id="salonId" value="">
+                                <div class="col-md-6 col-sm-12">
+                                    <label for="SalonNumero">Salon</label>
+                                    <input type="text" class="form-control" id="SalonNumero" required>
                                 </div>
-                                <div class="d-flex justify-content-end">
-                                    <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                                        <button type="submit" name="guardar" class="btn btn-success">Guardar</button>
-                                    </div>    
+                                <div class="col-md-6 col-sm-12">
+                                    <label for="EdificiosId">Edificio</label>
+                                    <select class="form-select" id="EdificiosId" required>
+                                        <option value="">Selecciona un edificio</option>
+                                    </select>
                                 </div>
-                            </form>                            
-                        </div>
-                    </div>
+                            </div>
+                            <div class="col-md-12 d-flex justify-content-between align-items-center mb-3">
+                                <div></div>
+                                <div class="btn-group">
+                                    <button type="submit" class="btn btn-success">Guardar</button>
+                                    <button type="button" class="btn btn-secondary ml-2" id="btnCancel">Cancelar</button>
+                                </div>
+                                
+                            </div>
+                        </form>
+                    </div>         
                 </div>
 
-                <!--Lista de salones-->
-                <div class="col-md-12 mb-4">
-                    <div class="card">
-                        <div class="card-header">
-                            Lista de Salones
-                        </div>
-                        <div class="card-body">
-                            <table class="table table-hover table-borderless">
-                                <thead>
-                                    <tr>
-                                        <th scope="col" class="text-center"><b>Numero de Salon</b></th>
-                                        <th scope="col" class="text-center"><b>Edificio</b></th>
-                                        <th scope="col" class="text-center"><b>Fecha de modificacion</b></th>
-                                        <th scope="col" class="text-center"><b>Acciones</b></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for salon in salones %}
-                                        <tr>    
-                                            <td class="text-center">{{ salon[0] }}</td>
-                                            <td class="text-center">{{ salon[1] }}</td>
-                                            <td class="text-center">{{ salon[3].strftime('%d/%m/%Y') }}</td>
-                                            <td class="text-center">
-                                                <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal"
-                                                            data-id="{{ salon[0] }}" data-edificio="{{ salon[2] }}">
-                                                            <ion-icon name="create"></ion-icon> Modificar
-                                                    </button>
-                                                <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#eliminarModal"
-                                                        data-id="{{ salon[0] }}" data-edificio="{{ salon[1] }}">
-                                                        <ion-icon name="trash"></ion-icon> Eliminar
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                
+                <!-- Lista de Materias -->
+                <div class="table-responsive">
+                    <table class=" align-middle text-center table table-dark table-striped d-none" id="salonesTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Salon</th>
+                                <th>Edificio</th>
+                                <th>Fecha de modificacion</th>
+                                <th>Status</th>
+                                <th>Personal que modifico</th>
+                                <th>Accion</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-group-divider" id="salonesTableBody"></tbody>                    
+                    </table>             
                 </div>
+                <br>
                 <div class="col-md-12 d-flex justify-content-between align-items-center mb-3">
                     <div></div>
-                    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#formSalones" aria-expanded="false" aria-controls="formSalones">
-                        <ion-icon name="add-circle"></ion-icon> Añadir Salón 
-                    </button>
+                    
                 </div>
             </div>
         </div>
         {% include 'message.html' %}
     </main>
 
-     <div class="menu">
+    <div class="menu">
         <ion-icon name="menu-outline"></ion-icon>
         <ion-icon name="close-outline"></ion-icon>
     </div>
 
-    <!-- Modal editar -->
-    <div class="modal-xl modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editModalLabel">Modificar</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form method="POST">
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="salon" class="form-label">ID</label>
-                                <input type="text" id="salon" name="salon" class="form-control" readonly>
-                            </div>
-                            <div class="col-md-6 col-sm-12">
-                                <label for="edificioSelect"> Edificio</label>
-                                <select class="form-select" id="edificioSelect" name="edificioSelect" required>
-                                    {% for edificio in edificios %}
-                                        <option value="{{ edificio[0] }}">{{ edificio[1] }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-end">
-                            <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                                <button type="submit" name="modificar" class="btn btn-warning">Modificar</button>
-                            </div>    
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal eliminar -->
-    <div class="modal-xl modal fade" id="eliminarModal" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="eliminarModalLabel">Eliminar</h5>
-                </div>
-                <div class="modal-body">
-                    <form method="POST">
-                        <div class="col-md-12">
-                            <h5>¿Estás seguro de querer eliminar la materia?</h5>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-md-4">
-                                <label class="form-label">Con Numero:</label>
-                                <input type="text" id="salon" name="salon" class="form-control" readonly>
-                            </div>
-                            <div class="col-md-8">
-                                <label class="form-label">Edificio:</label>
-                                <input type="text" id="edificio" name="edificio" class="form-control" readonly>
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-end">
-                            <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                                <button type="submit" name="eliminar" class="btn btn-danger"> Eliminar</button>
-                                <button type="button" class="btn btn-success" data-bs-dismiss="modal" aria-label="Close"> Cancelar</button>
-                            </div>    
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-
-
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
-    <script>
-        
-        // Capturar el evento cuando se abre el modal de edición
-        var editModal = document.getElementById('editModal');
-        editModal.addEventListener('show.bs.modal', function (event) {
-            // Botón que disparó el modal
-            var button = event.relatedTarget;
-            
-            // Extraer la información de los atributos data-* del botón
-            var id = button.getAttribute('data-id');
-            var edificio = button.getAttribute('data-edificio');
-            
-            // Rellenar el formulario dentro del modal con los datos correspondientes
-            var modalId = editModal.querySelector('#salon');
-            var select = document.getElementById('edificioSelect');
-            
-            modalId.value = id;
-            select.value = edificio;
-        });
-
-        
-        // Capturar el evento cuando se abre el modal de eliminar
-        var eliminarModal = document.getElementById('eliminarModal');
-        eliminarModal.addEventListener('show.bs.modal', function (event) {
-            // Botón que disparó el modal
-            var button = event.relatedTarget;
-            
-            // Extraer la información de los atributos data-* del botón
-            var id = button.getAttribute('data-id');
-            var materia = button.getAttribute('data-edificio');
-            
-            // Rellenar el formulario dentro del modal con los datos correspondientes
-            var modalId = eliminarModal.querySelector('#salon');
-            var modalMateria = eliminarModal.querySelector('#edificio');
-            
-            modalId.value = id;
-            modalMateria.value = materia;
-        });
-
-        // Función que se ejecuta cuando el DOM está completamente cargado
-        document.addEventListener('DOMContentLoaded', function () {
-            // Seleccionar todos los formularios de la página
-            var forms = document.querySelectorAll('form');
-            
-            // Iterar sobre cada formulario y reiniciarlo
-            forms.forEach(function(form) {
-                form.reset();
-            });
-        });
-    </script>
+    <script src="{{ url_for('static', filename='js/salones.js') }}"></script>    
+    
 </body>
 </html>

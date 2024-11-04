@@ -1,21 +1,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,500;1,500&display=swap');
 
 :root{
-    --color-barra-lateral:rgb(255,255,255);
+    --color-barra-lateral:rgb(44,45,49);
 
-    --color-texto:rgb(0,0,0);
-    --color-texto-menu:rgb(134,136,144);
+    --color-texto:rgb(255,255,255);
+    --color-texto-menu:rgb(110,110,117);
 
-    --color-menu-hover:rgb(238,238,238);
-    --color-menu-hover-texto:rgb(0,0,0);
+    --color-menu-hover:rgb(0,0,0);
+    --color-menu-hover-texto:rgb(238,238,238);
 
-    --color-boton:rgb(0,0,0);
-    --color-boton-texto:rgb(255,255,255);
+    --color-boton:rgb(255,255,255);
+    --color-boton-texto:rgb(0,0,0);
 
-    --color-linea:rgb(180,180,180);
+    --color-linea:rgb(90,90,90);
 
-    --color-scroll:rgb(192,192,192);
-    --color-scroll-hover:rgb(134,134,134);
+    --color-scroll:rgb(68,69,74);
+    --color-scroll-hover:rgb(85,85,85);
+
 }
 
 *{
@@ -31,7 +32,7 @@
 body{
     height: 100vh;
     width: 100%;
-    background-color: #c2c2c2;
+    background-color: #25252b;
 }
 
 /*-----------------Menu*/
@@ -288,7 +289,7 @@ main.min-main{
 .cita {
     font-family: 'Georgia', serif; /* Fuente similar a la imagen */
     font-size: 2rem; /* Tamaño de la fuente */
-    color: #333;
+    color: #e4e4e4;
     font-style: italic;
     margin-bottom: 20px;
     position: relative;
@@ -317,7 +318,7 @@ main.min-main{
 .autor-cita {
     font-family: 'Georgia', serif;
     font-size: 1.5rem;
-    color: #666;
+    color: #999;
     font-weight: normal;
 }
 
@@ -389,36 +390,67 @@ main.min-main{
 
 .alert.show{
     animation: show_slide 1s ease forwards;
-  }
-  @keyframes show_slide {
-    0%{
-      transform: translateX(100%);
-    }
-    40%{
-      transform: translateX(-10%);
-    }
-    80%{
-      transform: translateX(0%);
-    }
-    100%{
-      transform: translateX(-10px);
-    }
-  }
+}
 
-  .alert.hide{
-    animation: hide_slide 1s ease forwards;
-  }
-  @keyframes hide_slide {
-    0%{
-      transform: translateX(-10px);
-    }
-    40%{
-      transform: translateX(0%);
-    }
-    80%{
-      transform: translateX(-10%);
-    }
-    100%{
-      transform: translateX(100%);
-    }
-  }
+.btn{
+    color: #fff;
+    position: relative;
+    height: 45px;
+    background: transparent;
+    border-radius: 40px;
+    cursor: pointer;
+    font-size: 16px;
+    border: 2px solid #f4f4f4;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.btn::before{
+    content: "";
+    position: absolute;
+    height: 300%;
+    background: linear-gradient(#25252b,#f4f4f4,#25252b,#f4f4f4);
+    top: -100%;
+    left: 0;
+    z-index: -1;
+    transition: .5s;
+}
+
+.btn:hover:before{
+    top: 0;
+}
+
+
+
+@keyframes show_slide {
+0%{
+    transform: translateX(100%);
+}
+40%{
+    transform: translateX(-10%);
+}
+80%{
+    transform: translateX(0%);
+}
+100%{
+    transform: translateX(-10px);
+}
+}
+
+.alert.hide{
+animation: hide_slide 1s ease forwards;
+}
+@keyframes hide_slide {
+0%{
+    transform: translateX(-10px);
+}
+40%{
+    transform: translateX(0%);
+}
+80%{
+    transform: translateX(-10%);
+}
+100%{
+    transform: translateX(100%);
+}
+}

@@ -9,12 +9,11 @@ class EdificiosMySQL:
     def mostrarEdificios():
         try:
             cone = ConexionMySQL.cconexion()
-            cursor = cone.cursor()
+            with cone.cursor() as cursor:
 
-            #consulta MySQL
-            cursor.execute("SELECT * FROM edificio WHERE EdificioStatus = 'AC'")
-            miResultado = cursor.fetchall()
-            cone.commit()
+                #consulta MySQL
+                cursor.execute("SELECT * FROM edificio WHERE EdificioStatus = 'AC'")
+                miResultado = cursor.fetchall()
             return miResultado
         
         except pymysql.Error as error:
@@ -25,29 +24,50 @@ class EdificiosMySQL:
             cone.close()  # Cerrar la conexión
 
     @staticmethod
-    def ingresarEdifico(edifico):
+    def mostrarEdificiosporID(id):
         try:
             cone = ConexionMySQL.cconexion()
-            cursor = cone.cursor()
+            with cone.cursor() as cursor:
 
-            # Genera un nuevo ID para el edificio
-            cursor.execute("SELECT COUNT(*) FROM edificio")
-            tids = cursor.fetchone()[0] + 1
-            
-            # Asignación de valores
-            admin = "0"
-            fechmodi = datetime.now()
+                #consulta MySQL
+                sql = "SELECT * FROM edificio WHERE EdificioID = %s AND EdificioStatus = 'AC'"
+                values = (id)
+                cursor.execute(sql, values)
 
-            #consulta MySQL
-            sql = """INSERT INTO edificio (EdificioID, EdificioNombre, 
-                                            EdificioFechaModificacion, EdificioStatus, 
-                                            PersonalAdministrativoId) 
-                                VALUES (%s, %s, %s, %s, %s)"""
-            values = (tids, edifico, fechmodi, 'AC', admin)
+                miResultado = cursor.fetchone()
+            return miResultado
+        
+        except pymysql.Error as error:
+            print(f"Error al mostrar datos: {error}")
 
-            cursor.execute(sql, values)
-            cone.commit()
-            print(f"Ahora hay {tids} registros en la tabla")
+        finally:
+            cursor.close()  # Cerrar el cursor
+            cone.close()  # Cerrar la conexión
+
+    @staticmethod
+    def ingresarEdificio(data, personal):
+        try:
+            cone = ConexionMySQL.cconexion()
+            with cone.cursor() as cursor:
+                cursor.execute("SELECT MAX(EdificioID) FROM edificio")
+                max_id = cursor.fetchone()['MAX(EdificioID)'] or 4000
+                
+                #asigacion de valores
+                new_id = max_id + 1
+                fechmodi = datetime.now()
+                status = 'AC'
+
+                #consulta MySQL
+                sql = """INSERT INTO edificio (EdificioID, EdificioNombre, 
+                                                EdificioFechaModificacion, EdificioStatus, 
+                                                PersonalAdministrativoId) 
+                                    VALUES (%s, %s, %s, %s, %s, %s)"""
+                values = (new_id, data['EdificioNombre'], fechmodi, status, personal)
+
+                cursor.execute(sql, values)
+                cone.commit()
+
+                return new_id
         
         except pymysql.Error as error:
             print(f"Error de ingreso de datos: {error}")
@@ -57,25 +77,21 @@ class EdificiosMySQL:
             cone.close()  # Cerrar la conexión
     
     @staticmethod
-    def modificarEdificio(id, edificio):
+    def modificarEdificio(data, id, personal):
         try:
-            cone = ConexionMySQL.cconexion()
-            cursor = cone.cursor()
-
-            # Asignación de valores
-            admin = "0"
             fechmodi = datetime.now()
+            cone = ConexionMySQL.cconexion()
+            with cone.cursor() as cursor:
 
-            #consulta MySQL
-            sql ="""UPDATE edificio
-                    SET EdificioNombre = %s,
-                        EdificioFechaModificacion = %s, PersonalAdministrativoId = %s
-                    WHERE EdificioID = %s"""
-            values = (edificio, fechmodi, admin, id)
+                #consulta MySQL
+                sql ="""UPDATE edificio
+                        SET EdificioNombre = %s,
+                            EdificioFechaModificacion = %s, PersonalAdministrativoId = %s
+                        WHERE EdificioID = %s"""
+                values = (data['EdificioNombre'], fechmodi, personal, id)
 
-            cursor.execute(sql, values)
-            cone.commit()
-            print(f"Edificio con ID {id} fue actualizado.")
+                cursor.execute(sql, values)
+                cone.commit()
         
         except pymysql.Error as error:
             print(f"Error al modificar los datos: {error}")
@@ -85,20 +101,17 @@ class EdificiosMySQL:
             cone.close()  # Cerrar la conexión
 
     @staticmethod
-    def eliminarEdificio(id):
+    def eliminarEdificio(id, personal):
         try:
-            cone = ConexionMySQL.cconexion()
-            cursor = cone.cursor()
-            admin = "0"
+            #asignacion de valores
             fechmodi = datetime.now()
-
-            #consulta MySQL
-            sql = "UPDATE edificio SET EdificioStatus = 'IN', EdificioFechaModificacion = %s , PersonalAdministrativoId = %s WHERE edificio.EdificioID = %s"
-            values = (fechmodi,admin,id)
-            
-            cursor.execute(sql, values)
-            cone.commit()
-            print(f"Edificio con ID {id} fue eliminado.")
+            cone = ConexionMySQL.cconexion()
+            with cone.cursor() as cursor:
+                sql = "UPDATE edificio SET EdificioStatus = 'IN', EdificioFechaModificacion = %s , PersonalAdministrativoId = %s WHERE edificio.EdificioID = %s"
+                values = (fechmodi,personal,id)
+                
+                cursor.execute(sql, values)
+                cone.commit()
         
         except pymysql.Error as error:
             print(f"Error al eliminar los datos: {error}")
